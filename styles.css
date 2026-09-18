@@ -1,0 +1,122 @@
+:root {
+  --linen:  #F5F0E6;
+  --cream:  #FBF8F2;
+  --olive:  #6E7357;
+  --sage:   #9AA089;
+  --taupe:  #8B8175;
+  --ink:    #4A463F;
+
+  /* Swap this one line when the lake photo changes. */
+  --hero-image: url('images/lake.jpg');
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: 'Jost', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-weight: 300;
+}
+
+/* ---------- Hero ---------- */
+
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background-color: var(--linen);
+  background-image: var(--hero-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Softens the photo so the wordmark stays readable over any part of it. */
+.hero__scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom,
+      rgba(28, 26, 22, 0.28) 0%,
+      rgba(28, 26, 22, 0.10) 40%,
+      rgba(28, 26, 22, 0.34) 100%);
+}
+
+.wordmark {
+  position: relative;
+  margin: 0;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 300;
+  font-size: clamp(2.2rem, 8vw, 4.6rem);
+  line-height: 1.12;
+  letter-spacing: 0.06em;
+  text-align: center;
+  color: var(--cream);
+  text-shadow: 0 1px 24px rgba(28, 26, 22, 0.45);
+}
+
+.wordmark__line { display: block; }
+
+/* ---------- Five stars ---------- */
+
+.stars {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(0.5rem, 2.5vw, 1.1rem);
+  padding: clamp(3.5rem, 11vw, 6.5rem) 1rem;
+  background: var(--cream);
+}
+
+.star {
+  width: clamp(22px, 5.5vw, 34px);
+  height: auto;
+  fill: var(--olive);
+}
+
+/* ---------- Footer ---------- */
+
+.footer {
+  padding: clamp(2.5rem, 9vw, 4.5rem) 1.5rem clamp(3rem, 10vw, 5rem);
+  background: var(--linen);
+  text-align: center;
+  border-top: 1px solid rgba(110, 115, 87, 0.18);
+}
+
+.footer p { margin: 0 0 0.85rem; }
+
+.footer__name {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1.35rem, 4.5vw, 1.9rem);
+  letter-spacing: 0.1em;
+  color: var(--olive);
+}
+
+.footer__tag {
+  font-size: clamp(0.78rem, 2.6vw, 0.9rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--taupe);
+}
+
+.footer__verse {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(0.98rem, 3.2vw, 1.15rem);
+  color: var(--sage);
+  padding-top: 0.6rem;
+}
+
+.footer__legal {
+  margin-top: 1.8rem;
+  margin-bottom: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: rgba(139, 129, 117, 0.75);
+}
