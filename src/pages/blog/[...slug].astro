@@ -1,0 +1,115 @@
+---
+/**
+ * One blog post.
+ *
+ * Every published post in src/content/blog/ gets a page built from this file.
+ * The words come from the text file, so writing a post never means touching
+ * any code.
+ */
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import ClosingCta from '../../components/ClosingCta.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+// A date written as 2026-09-20 is read as midnight UTC. Without pinning the
+// display back to UTC, anyone west of Greenwich sees the day before.
+const formatDate = (date) =>
+  date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'UTC',
+  });
+---
+
+<Base title={post.data.title} description={post.data.summary}>
+  <PageHero
+    title={post.data.title}
+    line={formatDate(post.data.date)}
+    photo={post.data.photo ?? 'blog-placeholder.jpg'}
+    photoAlt={post.data.photoAlt ?? ''}
+    art="lily"
+  />
+
+  <article class="section">
+    <div class="wrap wrap--narrow prose">
+      <Content />
+    </div>
+  </article>
+
+  <section class="section band-cream center">
+    <div class="wrap wrap--narrow">
+      <a class="bracket-link" href="/blog/" data-label="all notes">
+        <span class="bracket-link__arrow"></span>
+      </a>
+    </div>
+  </section>
+
+  <ClosingCta
+    heading="Have a question about your own animals?"
+    line="Ask us. A free meet-and-greet comes before every first booking."
+  />
+</Base>
+
+<style is:global>
+  /* The shape of writing inside a blog post. Global rather than scoped,
+     because this styles text that comes from the post's own text file. */
+  .prose > * {
+    max-width: 62ch;
+    margin-inline: auto;
+  }
+
+  .prose h2 {
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-sm);
+    font-size: clamp(1.35rem, 3vw, 1.9rem);
+    letter-spacing: 0.03em;
+    text-transform: none;
+  }
+
+  .prose h3 {
+    margin-top: var(--space-lg);
+    margin-bottom: var(--space-xs);
+    font-size: clamp(1.15rem, 2.4vw, 1.4rem);
+  }
+
+  .prose p {
+    margin-bottom: var(--space-md);
+  }
+
+  .prose ul,
+  .prose ol {
+    margin: 0 auto var(--space-md);
+    padding-left: 1.3em;
+  }
+
+  .prose li {
+    margin-bottom: 0.45em;
+  }
+
+  .prose blockquote {
+    margin: var(--space-lg) auto;
+    padding-left: var(--space-md);
+    border-left: 1px solid var(--olive);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.2em;
+    color: var(--olive-ink);
+  }
+
+  .prose img {
+    margin-block: var(--space-lg);
+    border-radius: 3px;
+  }
+</style>

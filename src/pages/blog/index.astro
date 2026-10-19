@@ -1,0 +1,152 @@
+---
+/**
+ * The blog list: every published post, newest first.
+ *
+ * Posts that still have "draft: true" at the top are left out, so a
+ * half-written post never shows up on the live site.
+ */
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Photo from '../../components/Photo.astro';
+import ClosingCta from '../../components/ClosingCta.astro';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+// A date written as 2026-09-20 is read as midnight UTC. Without pinning the
+// display back to UTC, anyone west of Greenwich sees the day before.
+const formatDate = (date) =>
+  date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'UTC',
+  });
+---
+
+<Base
+  title="Notes on Caring for Homes and Animals"
+  description="Writing from Because He First Loved on in-home pet care, house sitting and looking after homes and animals across North Idaho."
+>
+  <PageHero
+    title="Notes"
+    line="Things worth knowing, from looking after homes and animals in North Idaho."
+    photo="blog-hero.jpg"
+    photoAlt=""
+    art="lily"
+  />
+
+  <section class="section">
+    <div class="wrap">
+      {
+        posts.length === 0 ? (
+          <p class="center">The first post is on its way.</p>
+        ) : (
+          <ul class="posts">
+            {posts.map((post) => (
+              <li class="posts__item">
+                <a class="posts__link" href={`/blog/${post.id}/`}>
+                  <div class="posts__media">
+                    <Photo
+                      src={post.data.photo ?? 'blog-placeholder.jpg'}
+                      alt={post.data.photoAlt ?? ''}
+                      ratio="4 / 3"
+                    />
+                  </div>
+                  <div class="posts__body">
+                    <p class="posts__date">{formatDate(post.data.date)}</p>
+                    <h2 class="posts__title">{post.data.title}</h2>
+                    <p class="posts__summary">{post.data.summary}</p>
+                    <span class="posts__more">
+                      <span class="posts__more-label">[read it]</span>
+                      <span class="bracket-link__arrow" aria-hidden="true"></span>
+                    </span>
+                  </div>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </section>
+
+  <ClosingCta
+    heading="Have a question about your own animals?"
+    line="Ask us. A free meet-and-greet comes before every first booking."
+  />
+</Base>
+
+<style>
+  .posts {
+    display: grid;
+    gap: var(--space-xl);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .posts__link {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+    align-items: center;
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--hairline);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  @media (min-width: 760px) {
+    .posts__link {
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: var(--space-xl);
+    }
+  }
+
+  .posts__item:last-child .posts__link {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .posts__date {
+    margin: 0 0 var(--space-xs);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--caption);
+  }
+
+  .posts__title {
+    margin: 0 0 var(--space-sm);
+    font-size: clamp(1.4rem, 3.2vw, 2.1rem);
+    letter-spacing: 0.03em;
+    text-transform: none;
+    color: var(--olive-ink);
+  }
+
+  .posts__summary {
+    margin: 0 0 var(--space-md);
+    max-width: 52ch;
+  }
+
+  .posts__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7em;
+    font-size: 0.74rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--olive);
+  }
+
+  .posts__link:hover .posts__title {
+    color: var(--olive);
+  }
+
+  .posts__link:hover .bracket-link__arrow {
+    width: 3.2em;
+  }
+</style>

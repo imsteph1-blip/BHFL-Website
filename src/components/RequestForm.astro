@@ -1,0 +1,1362 @@
+---
+/**
+ * The Request Care form.
+ *
+ * Everything the client checks opens the next thing to answer, so nobody is
+ * asked about chickens when they booked a dog walk.
+ *
+ * SENDING IS NOT CONNECTED YET.
+ * The form checks itself over and tells you what is missing, but there is
+ * nowhere for it to send to until the PDF and email step is set up. Set
+ * ENDPOINT below to switch sending on.
+ */
+import DatePicker from './DatePicker.astro';
+import {
+  timeOptions,
+  datesFinalOptions,
+  careOptions,
+  perDayOptions,
+  lengthOptions,
+  homeWatchTasks,
+  homeWatchHelp,
+  homeWatchIncluded,
+  farmGroups,
+  farmChores,
+  tripTypeOptions,
+  vehicleOptions,
+  careOnArrivalOptions,
+  carBehaviorOptions,
+  crateTrainedOptions,
+  rideAlongOptions,
+  petTypes,
+  petSexOptions,
+  spayedOptions,
+  houseTrainedOptions,
+  newPeopleOptions,
+  medicationGivenOptions,
+  timesADayOptions,
+  heardAboutOptions,
+} from '../data/form-options.js';
+import { serviceAreas } from '../data/site.js';
+
+/** Where the form sends itself. Null means sending is off. */
+const ENDPOINT = null;
+const sendReady = Boolean(ENDPOINT);
+
+const animalCards = careOptions.filter((c) => c.animals).map((c) => c.id);
+---
+
+<form class="form" novalidate data-request-form data-endpoint={ENDPOINT ?? ''}>
+  {
+    !sendReady && (
+      <p class="notice" data-send-notice>
+        <strong>Sending is not switched on yet.</strong> Have a look around the
+        form, but please call or text for now. Nothing typed here can reach us
+        until the last step is set up.
+      </p>
+    )
+  }
+
+  {/* SECTION 2: About you ------------------------------------------------ */}
+  <fieldset class="group">
+    <legend class="group__title">About you</legend>
+
+    <div class="row">
+      <label class="field">
+        <span class="field__label">First name <em>Required</em></span>
+        <input type="text" name="first-name" autocomplete="given-name" data-required />
+      </label>
+
+      <label class="field">
+        <span class="field__label">Last name <em>Required</em></span>
+        <input type="text" name="last-name" autocomplete="family-name" data-required />
+      </label>
+    </div>
+
+    <div class="row">
+      <label class="field">
+        <span class="field__label">Email <em>Required</em></span>
+        <input type="email" name="email" autocomplete="email" data-required />
+      </label>
+
+      <label class="field">
+        <span class="field__label">Phone <em>Required</em></span>
+        <input type="tel" name="phone" autocomplete="tel" data-required />
+      </label>
+    </div>
+
+    <label class="field">
+      <span class="field__label">Street address</span>
+      <input
+        type="text"
+        name="address"
+        autocomplete="street-address"
+        placeholder="Where we would be coming to"
+      />
+      <span class="field__note">Not required, but it helps us plan your care.</span>
+    </label>
+
+    <div class="row row--thirds">
+      <label class="field">
+        <span class="field__label">Town <em>Required</em></span>
+        <input type="text" name="town" list="towns" autocomplete="address-level2" data-required />
+        <datalist id="towns">
+          {serviceAreas.map((area) => <option value={area.name} />)}
+        </datalist>
+      </label>
+
+      <label class="field">
+        <span class="field__label">State <em>Required</em></span>
+        <input type="text" name="state" autocomplete="address-level1" value="ID" data-required />
+      </label>
+
+      <label class="field">
+        <span class="field__label">Zip <em>Required</em></span>
+        <input
+          type="text"
+          name="zip"
+          autocomplete="postal-code"
+          inputmode="numeric"
+          data-required
+        />
+      </label>
+    </div>
+  </fieldset>
+
+  {/* SECTION 3: Your dates ------------------------------------------------ */}
+  <fieldset class="group">
+    <legend class="group__title">Your dates</legend>
+
+    <DatePicker name="dates" label="When do you need us?" mode="range" placeholder="Choose your dates" />
+
+    <div class="row">
+      <label class="field">
+        <span class="field__label">About what time will you leave?</span>
+        <select name="leave-time">
+          <option value="">Choose a time</option>
+          {timeOptions.map((time) => <option>{time}</option>)}
+        </select>
+      </label>
+
+      <label class="field">
+        <span class="field__label">About what time will you be home?</span>
+        <select name="return-time">
+          <option value="">Choose a time</option>
+          {timeOptions.map((time) => <option>{time}</option>)}
+        </select>
+      </label>
+    </div>
+
+    <fieldset class="subgroup">
+      <legend class="field__label">Are these dates final?</legend>
+      <div class="choices">
+        {
+          datesFinalOptions.map((option) => (
+            <label class="choice">
+              <input
+                type="radio"
+                name="dates-final"
+                value={option.value}
+                data-opens={option.opensText ? 'dates-final-other' : undefined}
+              />
+              <span>{option.label}</span>
+            </label>
+          ))
+        }
+      </div>
+
+      <div class="reveal" id="dates-final-other" hidden>
+        <label class="field">
+          <span class="field__label">Tell us about the dates</span>
+          <input type="text" name="dates-final-other" />
+        </label>
+      </div>
+    </fieldset>
+  </fieldset>
+
+  {/* SECTION 4: What you need --------------------------------------------- */}
+  <fieldset class="group">
+    <legend class="group__title">What you need</legend>
+    <p class="group__note">What are you looking for? Check all that apply.</p>
+
+    <div class="cards">
+      {
+        careOptions.map((option) => (
+          <label class="card">
+            <input type="checkbox" name="care[]" value={option.label} data-care={option.id} />
+            <span class="card__body">
+              <span class="card__label">{option.label}</span>
+              {option.note && <span class="card__note">{option.note}</span>}
+            </span>
+          </label>
+        ))
+      }
+    </div>
+
+    {/* Other ------------------------------------------------------------- */}
+    <div class="reveal follow" data-follow="other" hidden>
+      <label class="field">
+        <span class="field__label">Tell us what you have in mind</span>
+        <textarea name="care-other" rows="3"></textarea>
+      </label>
+    </div>
+
+    {/* Drop-in visits ----------------------------------------------------- */}
+    <div class="reveal follow" data-follow="drop-in" hidden>
+      <h3 class="follow__title">Drop-in visits</h3>
+      <div class="row">
+        <label class="field">
+          <span class="field__label">Visits per day</span>
+          <select name="dropin-per-day">
+            <option value="">Choose one</option>
+            {perDayOptions.map((option) => <option>{option}</option>)}
+          </select>
+        </label>
+        <label class="field">
+          <span class="field__label">Visit length</span>
+          <select name="dropin-length">
+            <option value="">Choose one</option>
+            {lengthOptions.map((option) => <option>{option}</option>)}
+          </select>
+        </label>
+      </div>
+    </div>
+
+    {/* Dog walking -------------------------------------------------------- */}
+    <div class="reveal follow" data-follow="dog-walking" hidden>
+      <h3 class="follow__title">Dog walking</h3>
+      <div class="row">
+        <label class="field">
+          <span class="field__label">Walks per day</span>
+          <select name="walk-per-day">
+            <option value="">Choose one</option>
+            {perDayOptions.map((option) => <option>{option}</option>)}
+          </select>
+        </label>
+        <label class="field">
+          <span class="field__label">Walk length</span>
+          <select name="walk-length">
+            <option value="">Choose one</option>
+            {lengthOptions.map((option) => <option>{option}</option>)}
+          </select>
+        </label>
+      </div>
+    </div>
+
+    {/* Home and property watch -------------------------------------------- */}
+    <div class="reveal follow" data-follow="home-watch" hidden>
+      <h3 class="follow__title">Home and property watch</h3>
+
+      <fieldset class="subgroup">
+        <legend class="field__label">What would you like us to take care of?</legend>
+        <div class="choices">
+          {
+            homeWatchTasks.map((task) => (
+              <label class="choice">
+                <input type="checkbox" name="home-tasks[]" value={task} />
+                <span>{task}</span>
+              </label>
+            ))
+          }
+          <label class="choice">
+            <input type="checkbox" name="home-tasks[]" value="Other" data-opens="home-tasks-other" />
+            <span>Other</span>
+          </label>
+        </div>
+        <div class="reveal" id="home-tasks-other" hidden>
+          <label class="field">
+            <span class="field__label">Tell us what else</span>
+            <input type="text" name="home-tasks-other" />
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset class="subgroup">
+        <legend class="field__label">Helping while you are away</legend>
+        <div class="choices">
+          {
+            homeWatchHelp.map((item) => (
+              <label class="choice">
+                <input type="checkbox" name="home-help[]" value={item} />
+                <span>{item}</span>
+              </label>
+            ))
+          }
+        </div>
+      </fieldset>
+
+      <p class="included">
+        <span class="included__mark" aria-hidden="true"></span>
+        <span>
+          <strong>Included with every stay.</strong> {homeWatchIncluded}
+        </span>
+      </p>
+
+      <label class="field">
+        <span class="field__label">Anything else about the home</span>
+        <textarea
+          name="home-notes"
+          rows="3"
+          placeholder="The thermostat schedule, the sprinklers, the neighbor with a key"
+        ></textarea>
+      </label>
+    </div>
+
+    {/* Farm and homestead -------------------------------------------------- */}
+    <div class="reveal follow" data-follow="farm" hidden>
+      <h3 class="follow__title">Farm and homestead care</h3>
+      <p class="group__note">One card per group of animals.</p>
+
+      <div data-farm-list></div>
+
+      <p class="group__actions">
+        <button type="button" class="btn btn--small" data-add-farm>+ Add another group</button>
+      </p>
+    </div>
+
+    {/* Transportation ------------------------------------------------------ */}
+    <div class="reveal follow" data-follow="transport" hidden>
+      <h3 class="follow__title">State-to-state transportation</h3>
+
+      <div class="row">
+        <label class="field">
+          <span class="field__label">Picking up from</span>
+          <input type="text" name="trip-from" placeholder="Sandpoint, ID" />
+        </label>
+        <label class="field">
+          <span class="field__label">Going to</span>
+          <input type="text" name="trip-to" placeholder="Sacramento, CA" />
+        </label>
+      </div>
+
+      <fieldset class="subgroup">
+        <legend class="field__label">One way or round trip?</legend>
+        <div class="choices">
+          {
+            tripTypeOptions.map((option) => (
+              <label class="choice">
+                <input
+                  type="radio"
+                  name="trip-type"
+                  value={option.label}
+                  data-opens={option.opensReturn ? 'trip-return' : undefined}
+                />
+                <span>{option.label}</span>
+              </label>
+            ))
+          }
+        </div>
+
+        <div class="reveal" id="trip-return" hidden>
+          <DatePicker name="trip-return-date" label="Return date" mode="single" placeholder="Choose a day" />
+        </div>
+      </fieldset>
+
+      <div class="row">
+        <label class="field">
+          <span class="field__label">Whose vehicle?</span>
+          <select name="trip-vehicle">
+            <option value="">Choose one</option>
+            {vehicleOptions.map((option) => <option>{option}</option>)}
+          </select>
+        </label>
+        <label class="field">
+          <span class="field__label">Shall we care for your animals once we arrive?</span>
+          <select name="trip-care-on-arrival">
+            <option value="">Choose one</option>
+            {careOnArrivalOptions.map((option) => <option>{option}</option>)}
+          </select>
+        </label>
+      </div>
+
+      <div class="row">
+        <label class="field">
+          <span class="field__label">How do your animals do in the car?</span>
+          <select name="trip-car-behavior">
+            <option value="">Choose one</option>
+            {carBehaviorOptions.map((option) => <option>{option}</option>)}
+          </select>
+        </label>
+        <label class="field">
+          <span class="field__label">Are they crate trained?</span>
+          <select name="trip-crate">
+            <option value="">Choose one</option>
+            {crateTrainedOptions.map((option) => <option>{option}</option>)}
+          </select>
+        </label>
+      </div>
+
+      <label class="field">
+        <span class="field__label">Will anyone from your family ride along?</span>
+        <select name="trip-ride-along">
+          <option value="">Choose one</option>
+          {rideAlongOptions.map((option) => <option>{option}</option>)}
+        </select>
+      </label>
+    </div>
+  </fieldset>
+
+  {/* SECTION 5: Your animals ---------------------------------------------- */}
+  <fieldset class="group" data-animals hidden>
+    <legend class="group__title">Your animals</legend>
+    <p class="group__note">
+      One card per pet. None of it is required, but the more we know before we
+      arrive, the less anyone has to explain on the day.
+    </p>
+
+    <div data-pet-list></div>
+
+    <p class="group__actions">
+      <button type="button" class="btn btn--small" data-add-pet>+ Add another pet</button>
+    </p>
+  </fieldset>
+
+  {/* SECTION 6: Anything we should know ------------------------------------ */}
+  <fieldset class="group">
+    <legend class="group__title">Anything we should know</legend>
+
+    <label class="field">
+      <span class="field__label">How did you hear about us?</span>
+      <select name="heard-about" data-opens="heard-about-other" data-opens-on="Other">
+        <option value="">Choose one</option>
+        {heardAboutOptions.map((option) => <option>{option}</option>)}
+      </select>
+    </label>
+
+    <div class="reveal" id="heard-about-other" hidden>
+      <label class="field">
+        <span class="field__label">Tell us where</span>
+        <input type="text" name="heard-about-other" />
+      </label>
+    </div>
+
+    <label class="field">
+      <span class="field__label">Is there anything else we should know?</span>
+      <textarea
+        name="anything-else"
+        rows="5"
+        placeholder="Quirks of the home like a tricky lock or a light on a timer, cameras in the home, who might stop by, or anything that needs taking care of while we are there"
+      ></textarea>
+    </label>
+  </fieldset>
+
+  {/* SECTION 7: Send -------------------------------------------------------- */}
+  <p class="form__error" data-form-error hidden></p>
+
+  <p class="form__actions">
+    <button type="submit" class="btn btn--filled">Send</button>
+  </p>
+
+  <p class="form__reassure">
+    We reply within 24 hours. No deposit needed to talk, and the meet-and-greet
+    is free.
+  </p>
+</form>
+
+{/* Shown in place of the form once it has been sent. */}
+<div class="thanks" data-thanks hidden>
+  <img
+    class="thanks__art art"
+    src="/images/brand/prepared/butterfly-lily-wide-olive.png"
+    alt=""
+    aria-hidden="true"
+  />
+  <p class="thanks__line" data-thanks-line></p>
+  <p class="thanks__sign">God bless, Stephanie &amp; Luke</p>
+</div>
+
+{/* One pet. Copied each time someone adds another. */}
+<template data-pet-template>
+  <fieldset class="card-block">
+    <legend class="card-block__title">Pet <span data-number>1</span></legend>
+    <button type="button" class="card-block__remove" data-remove hidden>
+      <span aria-hidden="true">&times;</span>
+      <span class="visually-hidden">Remove this pet</span>
+    </button>
+
+    <div class="row">
+      <label class="field">
+        <span class="field__label">Name</span>
+        <input type="text" name="pets[__i__][name]" placeholder="Betsy" />
+      </label>
+      <label class="field">
+        <span class="field__label">Type</span>
+        <select name="pets[__i__][type]" data-opens="pet-type-other-__i__" data-opens-on="Other">
+          <option value="">Choose one</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="reveal" id="pet-type-other-__i__" hidden>
+      <label class="field">
+        <span class="field__label">What are they?</span>
+        <input type="text" name="pets[__i__][type-other]" />
+      </label>
+    </div>
+
+    <div class="row">
+      <label class="field">
+        <span class="field__label">Breed</span>
+        <input type="text" name="pets[__i__][breed]" placeholder="Bernese Mountain Dog" />
+      </label>
+      <label class="field">
+        <span class="field__label">Weight (lb)</span>
+        <input type="text" name="pets[__i__][weight]" inputmode="numeric" />
+      </label>
+    </div>
+
+    <div class="row">
+      <label class="field">
+        <span class="field__label">Age, years</span>
+        <select name="pets[__i__][age-years]" data-years><option value="">Choose one</option></select>
+      </label>
+      <label class="field">
+        <span class="field__label">Age, months</span>
+        <select name="pets[__i__][age-months]" data-months><option value="">Choose one</option></select>
+      </label>
+    </div>
+
+    <div class="row">
+      <label class="field">
+        <span class="field__label">Sex</span>
+        <select name="pets[__i__][sex]" data-list="sex"><option value="">Choose one</option></select>
+      </label>
+      <label class="field">
+        <span class="field__label">Spayed or neutered</span>
+        <select name="pets[__i__][spayed]" data-list="spayed"><option value="">Choose one</option></select>
+      </label>
+    </div>
+
+    <div class="row">
+      <label class="field">
+        <span class="field__label">House-trained</span>
+        <select name="pets[__i__][house-trained]" data-list="houseTrained"><option value="">Choose one</option></select>
+      </label>
+      <label class="field">
+        <span class="field__label">With new people</span>
+        <select name="pets[__i__][new-people]" data-list="newPeople"><option value="">Choose one</option></select>
+      </label>
+    </div>
+
+    <fieldset class="subgroup">
+      <legend class="field__label">Medication needed?</legend>
+      <div class="choices">
+        <label class="choice">
+          <input type="radio" name="pets[__i__][medication]" value="Yes" data-opens="pet-med-__i__" />
+          <span>Yes</span>
+        </label>
+        <label class="choice">
+          <input type="radio" name="pets[__i__][medication]" value="No" />
+          <span>No</span>
+        </label>
+      </div>
+
+      <div class="reveal" id="pet-med-__i__" hidden>
+        <label class="field">
+          <span class="field__label">What it is</span>
+          <input type="text" name="pets[__i__][med-name]" />
+        </label>
+        <div class="row">
+          <label class="field">
+            <span class="field__label">How it is given</span>
+            <select name="pets[__i__][med-how]" data-list="medicationGiven"><option value="">Choose one</option></select>
+          </label>
+          <label class="field">
+            <span class="field__label">Times a day</span>
+            <select name="pets[__i__][med-times]" data-list="timesADay"><option value="">Choose one</option></select>
+          </label>
+        </div>
+        <label class="field">
+          <span class="field__label">Medication notes</span>
+          <textarea name="pets[__i__][med-notes]" rows="2"></textarea>
+        </label>
+      </div>
+    </fieldset>
+
+    <label class="field">
+      <span class="field__label">Health conditions or special needs</span>
+      <textarea name="pets[__i__][health]" rows="2"></textarea>
+    </label>
+
+    <label class="field">
+      <span class="field__label">Anything else about this pet</span>
+      <textarea
+        name="pets[__i__][notes]"
+        rows="2"
+        placeholder="Favorite toy, hides under the bed, loves belly rubs"
+      ></textarea>
+    </label>
+  </fieldset>
+</template>
+
+{/* One group of farm animals. */}
+<template data-farm-template>
+  <fieldset class="card-block">
+    <legend class="card-block__title">Group <span data-number>1</span></legend>
+    <button type="button" class="card-block__remove" data-remove hidden>
+      <span aria-hidden="true">&times;</span>
+      <span class="visually-hidden">Remove this group</span>
+    </button>
+
+    <div class="row">
+      <label class="field">
+        <span class="field__label">Group</span>
+        <select name="farm[__i__][group]" data-list="farmGroups"><option value="">Choose one</option></select>
+      </label>
+      <label class="field">
+        <span class="field__label">How many?</span>
+        <input type="number" name="farm[__i__][count]" min="1" inputmode="numeric" />
+      </label>
+    </div>
+
+    <fieldset class="subgroup">
+      <legend class="field__label">Daily chores</legend>
+      <div class="choices" data-chores></div>
+    </fieldset>
+
+    <label class="field">
+      <span class="field__label">Notes</span>
+      <textarea
+        name="farm[__i__][notes]"
+        rows="3"
+        placeholder="Feed amounts, where the hay is, the gate latch"
+      ></textarea>
+    </label>
+  </fieldset>
+</template>
+
+<style>
+  /* ---- Notice ---------------------------------------------------------- */
+
+  .notice {
+    margin-bottom: var(--space-lg);
+    padding: var(--space-md);
+    border: 1px solid var(--olive);
+    border-radius: 3px;
+    background: var(--warm-white);
+    font-size: 0.92em;
+    text-align: center;
+  }
+
+  .notice strong {
+    font-weight: 600;
+    color: var(--olive-ink);
+  }
+
+  /* ---- Sections --------------------------------------------------------- */
+
+  .group {
+    margin: 0 0 var(--space-xl);
+    padding: 0;
+    border: 0;
+  }
+
+  .group[hidden] {
+    display: none;
+  }
+
+  .group__title {
+    width: 100%;
+    margin-bottom: var(--space-md);
+    padding: 0 0 0.6rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.3rem, 3vw, 1.7rem);
+    letter-spacing: 0.04em;
+    color: var(--olive-ink);
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .group__note {
+    margin-top: -0.4rem;
+    margin-bottom: var(--space-md);
+    font-size: 0.9em;
+    color: var(--caption);
+  }
+
+  .group__actions {
+    margin: 0;
+  }
+
+  .subgroup {
+    margin: 0 0 var(--space-md);
+    padding: 0;
+    border: 0;
+  }
+
+  /* ---- Fields ------------------------------------------------------------ */
+
+  .row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+  }
+
+  @media (min-width: 620px) {
+    .row {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .row--thirds {
+      grid-template-columns: 2fr 1fr 1fr;
+    }
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: var(--space-md);
+  }
+
+  .row .field {
+    margin-bottom: 0;
+  }
+
+  .field__label {
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--caption);
+  }
+
+  /* The quiet "Required" tag beside a label. */
+  .field__label em {
+    margin-left: 0.5em;
+    font-style: normal;
+    font-size: 0.86em;
+    letter-spacing: 0.1em;
+    color: var(--olive);
+    opacity: 0.8;
+  }
+
+  .field__note {
+    font-size: 0.8rem;
+    color: var(--caption);
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    padding: 0.85em 1em;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 300;
+    color: var(--charcoal);
+    background: var(--warm-white);
+    border: 1px solid var(--hairline);
+    border-radius: 2px;
+  }
+
+  .field select {
+    appearance: auto;
+    cursor: pointer;
+  }
+
+  .field textarea {
+    resize: vertical;
+  }
+
+  .field input::placeholder,
+  .field textarea::placeholder {
+    color: var(--caption);
+    opacity: 0.75;
+  }
+
+  /* A field that was left blank when it was needed. */
+  .field input[aria-invalid='true'] {
+    border-color: var(--earth-deep);
+  }
+
+  .field__error {
+    font-size: 0.82rem;
+    color: var(--earth-deep);
+  }
+
+  .field__error[hidden] {
+    display: none;
+  }
+
+  /* ---- Checkboxes and radios ---------------------------------------------- */
+
+  .choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .choice {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 44px;
+    cursor: pointer;
+  }
+
+  .choice input {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--olive);
+    cursor: pointer;
+  }
+
+  /* ---- The big clickable cards --------------------------------------------- */
+
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+  }
+
+  @media (min-width: 620px) {
+    .cards {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .card {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    min-height: 56px;
+    padding: 1rem 1.1rem;
+    background: var(--warm-white);
+    border: 1px solid var(--hairline);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: border-color 0.18s ease, background-color 0.18s ease;
+  }
+
+  .card:hover {
+    border-color: var(--olive);
+  }
+
+  .card input {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    accent-color: var(--olive);
+    cursor: pointer;
+  }
+
+  .card:has(input:checked) {
+    border-color: var(--olive);
+    background: var(--cream);
+  }
+
+  .card:has(input:focus-visible) {
+    outline: 2px solid var(--olive);
+    outline-offset: 2px;
+  }
+
+  .card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .card__label {
+    font-size: 0.96rem;
+    color: var(--olive-ink);
+  }
+
+  .card__note {
+    font-size: 0.78rem;
+    color: var(--caption);
+  }
+
+  /* ---- Things that slide open ----------------------------------------------- */
+
+  .reveal[hidden] {
+    display: none;
+  }
+
+  /* A gentle open, and nothing at all for anyone who asked for less motion. */
+  .reveal {
+    animation: slide-down 0.26s ease;
+  }
+
+  @keyframes slide-down {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .follow {
+    margin-bottom: var(--space-lg);
+    padding: var(--space-md) var(--space-md) 0.4rem;
+    border: 1px solid var(--hairline);
+    border-left: 2px solid var(--olive);
+    border-radius: 3px;
+    background: var(--warm-white);
+  }
+
+  .follow__title {
+    margin: 0 0 var(--space-md);
+    font-size: 1.15rem;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    color: var(--olive-ink);
+  }
+
+  /* ---- The soft "included" note ------------------------------------------------ */
+
+  .included {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: var(--space-md);
+    padding: var(--space-md);
+    background: var(--cream);
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+
+  .included strong {
+    font-weight: 600;
+    color: var(--olive-ink);
+  }
+
+  /* A check drawn in CSS, so there is no icon file to load. */
+  .included__mark {
+    flex: none;
+    width: 14px;
+    height: 8px;
+    margin-top: 0.45em;
+    border-left: 2px solid var(--olive);
+    border-bottom: 2px solid var(--olive);
+    transform: rotate(-45deg);
+  }
+
+  /* ---- Repeating cards, for pets and farm groups ---------------------------------- */
+
+  .card-block {
+    position: relative;
+    margin: 0 0 var(--space-md);
+    padding: var(--space-md);
+    border: 1px solid var(--hairline);
+    border-radius: 3px;
+    background: var(--warm-white);
+  }
+
+  .card-block__title {
+    padding: 0 0.5rem;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--olive);
+  }
+
+  .card-block__remove {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    font-size: 1.3rem;
+    line-height: 1;
+    color: var(--caption);
+    background: none;
+    border: 0;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  .card-block__remove:hover {
+    color: var(--olive-ink);
+    background: var(--cream);
+  }
+
+  .card-block__remove[hidden] {
+    display: none;
+  }
+
+  /* ---- Sending ---------------------------------------------------------------- */
+
+  .form__error {
+    margin-bottom: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    border-left: 2px solid var(--earth-deep);
+    background: var(--warm-white);
+    font-size: 0.92em;
+    color: var(--earth-deep);
+  }
+
+  .form__error[hidden] {
+    display: none;
+  }
+
+  .form__actions {
+    margin: var(--space-lg) 0 0;
+    text-align: center;
+  }
+
+  .form__reassure {
+    max-width: 42ch;
+    margin: var(--space-md) auto 0;
+    font-size: 0.9rem;
+    color: var(--caption);
+    text-align: center;
+  }
+
+  /* ---- Thank you ---------------------------------------------------------------- */
+
+  .thanks {
+    padding: var(--space-xl) var(--space-md);
+    text-align: center;
+  }
+
+  .thanks[hidden] {
+    display: none;
+  }
+
+  .thanks__art {
+    height: clamp(56px, 9vw, 80px);
+    width: auto;
+    margin: 0 auto var(--space-md);
+  }
+
+  .thanks__line {
+    max-width: 34ch;
+    margin: 0 auto var(--space-md);
+    font-family: var(--font-display);
+    font-size: clamp(1.3rem, 3.4vw, 1.9rem);
+    line-height: 1.4;
+    color: var(--olive-ink);
+  }
+
+  .thanks__sign {
+    margin: 0;
+    font-size: 0.74rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--caption);
+  }
+</style>
+
+<script is:inline type="application/json" data-form-options set:html={JSON.stringify({
+  animalCards,
+  petTypes,
+  petSexOptions,
+  spayedOptions,
+  houseTrainedOptions,
+  newPeopleOptions,
+  medicationGivenOptions,
+  timesADayOptions,
+  farmGroups,
+  farmChores,
+})} />
+
+<script>
+  const form = document.querySelector('[data-request-form]');
+  if (form) {
+    const endpoint = form.dataset.endpoint || '';
+
+    // The choice lists are rendered into the page as data, so this script
+    // stays an ordinary bundled one rather than an inline copy.
+    const {
+      animalCards,
+      petTypes,
+      petSexOptions,
+      spayedOptions,
+      houseTrainedOptions,
+      newPeopleOptions,
+      medicationGivenOptions,
+      timesADayOptions,
+      farmGroups,
+      farmChores,
+    } = JSON.parse(document.querySelector('[data-form-options]').textContent);
+
+    /** Lists the repeating cards pull their dropdown choices from. */
+    const lists = {
+      sex: petSexOptions,
+      spayed: spayedOptions,
+      houseTrained: houseTrainedOptions,
+      newPeople: newPeopleOptions,
+      medicationGiven: medicationGivenOptions,
+      timesADay: timesADayOptions,
+      farmGroups,
+    };
+
+    function fill(select, values) {
+      values.forEach((value) => {
+        const option = document.createElement('option');
+        option.textContent = value;
+        select.appendChild(option);
+      });
+    }
+
+    /** Shows or hides a revealed block, and empties it when it closes. */
+    function reveal(block, show) {
+      if (!block) return;
+      block.hidden = !show;
+      if (!show) {
+        block.querySelectorAll('input, select, textarea').forEach((field) => {
+          if (field.type === 'checkbox' || field.type === 'radio') field.checked = false;
+          else field.value = '';
+        });
+        // Anything revealed inside this block closes with it.
+        block.querySelectorAll('.reveal').forEach((inner) => (inner.hidden = true));
+      }
+    }
+
+    /* ---- Small reveals driven by data-opens ---------------------------- */
+
+    function wireReveals(scope) {
+      scope.querySelectorAll('[data-opens]').forEach((control) => {
+        const target = () => document.getElementById(control.dataset.opens);
+
+        if (control.tagName === 'SELECT') {
+          control.addEventListener('change', () => {
+            reveal(target(), control.value === control.dataset.opensOn);
+          });
+          return;
+        }
+
+        if (control.type === 'radio') {
+          // Every radio in the group has to be watched, so choosing a
+          // different answer closes whatever the old one opened. Searched
+          // within the scope rather than the whole form, because a repeating
+          // card is wired up before it is added to the page.
+          scope.querySelectorAll(`input[name="${CSS.escape(control.name)}"]`).forEach((sibling) => {
+            sibling.addEventListener('change', () => {
+              reveal(target(), control.checked);
+            });
+          });
+          return;
+        }
+
+        control.addEventListener('change', () => reveal(target(), control.checked));
+      });
+    }
+
+    /* ---- Section 4: the cards, and what each one opens ------------------ */
+
+    const careBoxes = [...form.querySelectorAll('[data-care]')];
+    const animalsSection = form.querySelector('[data-animals]');
+
+    function syncCare() {
+      careBoxes.forEach((box) => {
+        const follow = form.querySelector(`[data-follow="${box.dataset.care}"]`);
+        if (follow) reveal(follow, box.checked);
+      });
+
+      const wantsAnimals = careBoxes.some(
+        (box) => box.checked && animalCards.includes(box.dataset.care)
+      );
+      animalsSection.hidden = !wantsAnimals;
+
+      // Each repeating section opens with one card already there, so nobody
+      // meets an empty space and a button.
+      if (wantsAnimals && petList.children.length === 0) addPet();
+
+      const wantsFarm = form.querySelector('[data-care="farm"]').checked;
+      if (wantsFarm && farmList.children.length === 0) addFarmGroup();
+    }
+
+    careBoxes.forEach((box) => box.addEventListener('change', syncCare));
+
+    /* ---- Repeating cards ------------------------------------------------- */
+
+    function makeRepeater({ listSelector, templateSelector, addSelector, onBuild }) {
+      const list = form.querySelector(listSelector);
+      const template = document.querySelector(templateSelector);
+      const addButton = form.querySelector(addSelector);
+      let nextIndex = 0;
+
+      function renumber() {
+        [...list.children].forEach((block, i) => {
+          block.querySelector('[data-number]').textContent = String(i + 1);
+          // The first card is never removable, so there is always one there.
+          block.querySelector('[data-remove]').hidden = i === 0;
+        });
+      }
+
+      function add() {
+        const block = template.content.firstElementChild.cloneNode(true);
+        const index = nextIndex;
+        nextIndex += 1;
+
+        // Each card needs its own field names and its own ids, so answers and
+        // reveals never cross over between cards.
+        block.querySelectorAll('[name]').forEach((field) => {
+          field.name = field.name.replaceAll('__i__', String(index));
+        });
+        block.querySelectorAll('[id]').forEach((el) => {
+          el.id = el.id.replaceAll('__i__', String(index));
+        });
+        block.querySelectorAll('[data-opens]').forEach((el) => {
+          el.dataset.opens = el.dataset.opens.replaceAll('__i__', String(index));
+        });
+
+        block.querySelectorAll('select[data-list]').forEach((select) => {
+          fill(select, lists[select.dataset.list]);
+        });
+
+        onBuild?.(block, index);
+
+        block.querySelector('[data-remove]').addEventListener('click', () => {
+          block.remove();
+          renumber();
+        });
+
+        list.appendChild(block);
+        wireReveals(block);
+        renumber();
+        return block;
+      }
+
+      addButton.addEventListener('click', () => {
+        const block = add();
+        block.scrollIntoView({ block: 'nearest' });
+        block.querySelector('input, select')?.focus();
+      });
+
+      return { list, add };
+    }
+
+    const pets = makeRepeater({
+      listSelector: '[data-pet-list]',
+      templateSelector: '[data-pet-template]',
+      addSelector: '[data-add-pet]',
+      onBuild(block) {
+        fill(block.querySelector('select[data-years]'), range(0, 25));
+        fill(block.querySelector('select[data-months]'), range(0, 11));
+        fill(block.querySelector('select[name$="[type]"]'), petTypes);
+      },
+    });
+    const petList = pets.list;
+    const addPet = pets.add;
+
+    const farm = makeRepeater({
+      listSelector: '[data-farm-list]',
+      templateSelector: '[data-farm-template]',
+      addSelector: '[data-add-farm]',
+      onBuild(block, index) {
+        const box = block.querySelector('[data-chores]');
+        farmChores.forEach((chore) => {
+          const label = document.createElement('label');
+          label.className = 'choice';
+          const input = document.createElement('input');
+          input.type = 'checkbox';
+          input.name = `farm[${index}][chores][]`;
+          input.value = chore;
+          const text = document.createElement('span');
+          text.textContent = chore;
+          label.append(input, text);
+          box.appendChild(label);
+        });
+      },
+    });
+
+    const farmList = farm.list;
+    const addFarmGroup = farm.add;
+
+    function range(from, to) {
+      return Array.from({ length: to - from + 1 }, (_, i) => String(from + i));
+    }
+
+    /* ---- Checking it over before sending --------------------------------- */
+
+    const formError = form.querySelector('[data-form-error]');
+
+    function clearError(field) {
+      field.removeAttribute('aria-invalid');
+      field.parentElement.querySelector('.field__error')?.remove();
+    }
+
+    function showError(field, message) {
+      clearError(field);
+      field.setAttribute('aria-invalid', 'true');
+      const note = document.createElement('span');
+      note.className = 'field__error';
+      note.textContent = message;
+      field.parentElement.appendChild(note);
+    }
+
+    form.querySelectorAll('[data-required]').forEach((field) => {
+      field.addEventListener('input', () => {
+        if (field.value.trim()) clearError(field);
+      });
+    });
+
+    function check() {
+      let firstBad = null;
+
+      form.querySelectorAll('[data-required]').forEach((field) => {
+        clearError(field);
+        const value = field.value.trim();
+
+        if (!value) {
+          showError(field, 'We need this one.');
+          firstBad = firstBad || field;
+        } else if (field.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          showError(field, 'That email does not look quite right.');
+          firstBad = firstBad || field;
+        }
+      });
+
+      return firstBad;
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      formError.hidden = true;
+
+      const firstBad = check();
+      if (firstBad) {
+        formError.hidden = false;
+        formError.textContent = 'A few things are still needed. They are marked below.';
+        firstBad.focus();
+        firstBad.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        return;
+      }
+
+      if (!endpoint) {
+        formError.hidden = false;
+        formError.textContent =
+          'Everything looks complete, but sending is not switched on yet. Please call or text us instead.';
+        return;
+      }
+
+      const button = form.querySelector('button[type="submit"]');
+      button.disabled = true;
+      button.textContent = 'Sending...';
+
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          body: new FormData(form),
+        });
+        if (!response.ok) throw new Error('Send failed');
+
+        const thanks = document.querySelector('[data-thanks]');
+        const firstName = form.querySelector('[name="first-name"]').value.trim();
+        thanks.querySelector('[data-thanks-line]').textContent =
+          `Thank you, ${firstName}. We have your details and will be in touch soon.`;
+        form.hidden = true;
+        thanks.hidden = false;
+        thanks.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      } catch {
+        button.disabled = false;
+        button.textContent = 'Send';
+        formError.hidden = false;
+        formError.textContent =
+          'Something went wrong sending that. Please call or text us, and we will sort it out.';
+      }
+    });
+
+    wireReveals(form);
+    syncCare();
+  }
+</script>

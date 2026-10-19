@@ -1,0 +1,516 @@
+---
+/**
+ * The header that sits on every page.
+ *
+ * Wild Woods style: a centred wordmark with the butterfly crest, the tagline
+ * in small spaced capitals underneath, then one centred row of menu links
+ * held between two thin lines.
+ *
+ * On phones the menu row is replaced by a three-line button that opens a
+ * full-screen cream menu.
+ */
+import { business, mainNav } from '../data/site.js';
+
+const { pathname } = Astro.url;
+
+/** Marks the link for the page you are currently on. */
+function isCurrent(href) {
+  if (href === '/') return pathname === '/';
+  return pathname.startsWith(href);
+}
+
+/** "Our Services" should look active while you are on any service page. */
+function isSectionCurrent(item) {
+  if (item.children) return item.children.some((child) => isCurrent(child.href));
+  return isCurrent(item.href);
+}
+---
+
+<header class="site-header">
+  <a class="wordmark" href="/">
+    <img
+      class="wordmark__crest art"
+      src="/images/brand/prepared/butterfly-front-olive.png"
+      alt=""
+      width="619"
+      height="704"
+      aria-hidden="true"
+    />
+    <span class="wordmark__name">{business.name}</span>
+    <span class="wordmark__tagline">{business.tagline}</span>
+  </a>
+
+  <!-- Phone menu button. Hidden on wider screens. -->
+  <button
+    class="menu-toggle"
+    type="button"
+    aria-expanded="false"
+    aria-controls="mobile-menu"
+    data-menu-toggle
+  >
+    <span class="menu-toggle__bars" aria-hidden="true"></span>
+    <span class="visually-hidden">Menu</span>
+  </button>
+
+  <nav class="main-nav" aria-label="Main">
+    <ul class="main-nav__list">
+      {
+        mainNav.map((item) =>
+          item.children ? (
+            <li class="main-nav__item has-children" data-dropdown>
+              <button
+                type="button"
+                class:list={['main-nav__link', 'main-nav__button', { 'is-current': isSectionCurrent(item) }]}
+                aria-expanded="false"
+                aria-controls="services-menu"
+                data-dropdown-toggle
+              >
+                {item.name}
+                <span class="caret" aria-hidden="true"></span>
+              </button>
+              <ul class="dropdown" id="services-menu" data-dropdown-menu>
+                {item.children.map((child) => (
+                  <li>
+                    <a
+                      href={child.href}
+                      class:list={['dropdown__link', { 'is-current': isCurrent(child.href) }]}
+                      aria-current={isCurrent(child.href) ? 'page' : undefined}
+                    >
+                      {child.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ) : (
+            <li class="main-nav__item">
+              <a
+                href={item.href}
+                class:list={['main-nav__link', { 'is-current': isCurrent(item.href) }]}
+                aria-current={isCurrent(item.href) ? 'page' : undefined}
+              >
+                {item.name}
+              </a>
+            </li>
+          )
+        )
+      }
+    </ul>
+  </nav>
+</header>
+
+<!-- The full-screen menu that opens on phones. -->
+<div class="mobile-menu" id="mobile-menu" data-mobile-menu hidden>
+  <nav aria-label="Main, phone">
+    <ul class="mobile-menu__list">
+      {
+        mainNav.map((item) => (
+          <li>
+            {item.children ? (
+              <span class="mobile-menu__link mobile-menu__heading">{item.name}</span>
+            ) : (
+              <a href={item.href} class="mobile-menu__link">
+                {item.name}
+              </a>
+            )}
+            {item.children && (
+              <ul class="mobile-menu__sub">
+                {item.children.map((child) => (
+                  <li>
+                    <a href={child.href} class="mobile-menu__sublink">
+                      {child.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <a class="btn btn--filled mobile-menu__cta" href="/request-care/">Request care</a>
+
+  <a class="mobile-menu__phone" href={`tel:${business.phoneLink}`}>{business.phone}</a>
+</div>
+
+<style>
+  .site-header {
+    position: relative;
+    background: var(--warm-white);
+    padding-top: clamp(1.6rem, 3.5vw, 2.4rem);
+  }
+
+  /* ---- Wordmark ---- */
+
+  .wordmark {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    text-decoration: none;
+    padding-inline: 4.5rem; /* keeps clear of the phone menu button */
+    padding-bottom: clamp(1.2rem, 3vw, 1.9rem);
+  }
+
+  .wordmark__crest {
+    width: auto;
+    height: clamp(34px, 5vw, 52px);
+    margin-bottom: 0.15rem;
+  }
+
+  .wordmark__name {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(1.45rem, 4.4vw, 2.5rem);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--olive-ink);
+    line-height: 1.1;
+    text-align: center;
+  }
+
+  .wordmark__tagline {
+    font-size: 0.62rem;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--caption);
+  }
+
+  @media (min-width: 640px) {
+    .wordmark__tagline {
+      font-size: 0.68rem;
+    }
+  }
+
+  /* ---- The menu row between two hairlines ---- */
+
+  .main-nav {
+    display: none;
+    border-top: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  @media (min-width: 900px) {
+    .main-nav {
+      display: block;
+    }
+  }
+
+  .main-nav__list {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: clamp(1.5rem, 4vw, 3.4rem);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .main-nav__item {
+    position: relative;
+    display: flex;
+  }
+
+  .main-nav__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 1.15em 0;
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--charcoal);
+    text-decoration: none;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    transition: color 0.18s ease;
+  }
+
+  .main-nav__link:hover,
+  .main-nav__link.is-current {
+    color: var(--olive);
+  }
+
+  /* The little triangle beside Our Services. */
+  .caret {
+    width: 0;
+    height: 0;
+    border-left: 3.5px solid transparent;
+    border-right: 3.5px solid transparent;
+    border-top: 4px solid currentColor;
+    transition: transform 0.2s ease;
+  }
+
+  [aria-expanded='true'] .caret {
+    transform: rotate(180deg);
+  }
+
+  /* ---- Services dropdown ---- */
+
+  .dropdown {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 40;
+    min-width: 230px;
+    margin: 0;
+    padding: 0.5rem 0;
+    list-style: none;
+    background: var(--warm-white);
+    border: 1px solid var(--hairline);
+    border-top: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.18s ease;
+  }
+
+  .main-nav__item.is-open .dropdown {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .dropdown__link {
+    display: block;
+    padding: 0.7rem 1.5rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--charcoal);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 0.16s ease, color 0.16s ease;
+  }
+
+  .dropdown__link:hover,
+  .dropdown__link.is-current {
+    background: var(--cream);
+    color: var(--olive);
+  }
+
+  /* ---- Phone menu button ---- */
+
+  .menu-toggle {
+    position: absolute;
+    top: clamp(1.6rem, 3.5vw, 2.4rem);
+    right: var(--gutter);
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    z-index: 60;
+  }
+
+  @media (min-width: 900px) {
+    .menu-toggle {
+      display: none;
+    }
+  }
+
+  .menu-toggle__bars,
+  .menu-toggle__bars::before,
+  .menu-toggle__bars::after {
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--olive-ink);
+    transition: transform 0.22s ease, opacity 0.22s ease;
+  }
+
+  .menu-toggle__bars::before,
+  .menu-toggle__bars::after {
+    content: '';
+    position: absolute;
+  }
+
+  .menu-toggle__bars::before {
+    transform: translateY(-7px);
+  }
+
+  .menu-toggle__bars::after {
+    transform: translateY(7px);
+  }
+
+  /* Turns into a cross while the menu is open. */
+  .menu-toggle[aria-expanded='true'] .menu-toggle__bars {
+    background: transparent;
+  }
+
+  .menu-toggle[aria-expanded='true'] .menu-toggle__bars::before {
+    transform: rotate(45deg);
+  }
+
+  .menu-toggle[aria-expanded='true'] .menu-toggle__bars::after {
+    transform: rotate(-45deg);
+  }
+
+  /* ---- Full-screen phone menu ---- */
+
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: var(--cream);
+    padding: 6.5rem var(--gutter) 3rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .mobile-menu[hidden] {
+    display: none;
+  }
+
+  @media (min-width: 900px) {
+    .mobile-menu {
+      display: none;
+    }
+  }
+
+  .mobile-menu__list,
+  .mobile-menu__sub {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .mobile-menu__link {
+    display: block;
+    padding: 0.7rem 0;
+    font-family: var(--font-display);
+    font-size: 1.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--olive-ink);
+    text-decoration: none;
+  }
+
+  /* A heading rather than a link, because the four pages beneath it are the
+     destinations. There is no Our Services page of its own. */
+  .mobile-menu__heading {
+    display: block;
+    color: var(--olive-ink);
+  }
+
+  .mobile-menu__sub {
+    margin-bottom: 0.9rem;
+  }
+
+  .mobile-menu__sublink {
+    display: block;
+    padding: 0.55rem 0;
+    font-size: 0.76rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--caption);
+    text-decoration: none;
+  }
+
+  .mobile-menu__cta {
+    margin-top: 2rem;
+  }
+
+  .mobile-menu__phone {
+    margin-top: 1.5rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    color: var(--olive);
+    text-decoration: none;
+  }
+</style>
+
+<script>
+  // ---- Services dropdown -------------------------------------------------
+  // Works three ways: hover with a mouse, tap on a touch screen, and the
+  // keyboard. Escape closes it and puts focus back on the button.
+  const dropdown = document.querySelector('[data-dropdown]');
+
+  if (dropdown) {
+    const toggle = dropdown.querySelector('[data-dropdown-toggle]');
+    const canHover = window.matchMedia('(hover: hover)');
+
+    const open = () => {
+      dropdown.classList.add('is-open');
+      toggle.setAttribute('aria-expanded', 'true');
+    };
+
+    const close = () => {
+      dropdown.classList.remove('is-open');
+      toggle.setAttribute('aria-expanded', 'false');
+    };
+
+    // On a mouse, hovering already opens the menu, so a click there should
+    // only ever open it. Clicking to close would fight the hover, and the
+    // menu would seem to ignore the very click that just opened it.
+    // On a touch screen there is no hover, so tapping has to toggle.
+    toggle.addEventListener('click', (event) => {
+      event.preventDefault();
+      if (canHover.matches) {
+        open();
+      } else {
+        dropdown.classList.contains('is-open') ? close() : open();
+      }
+    });
+
+    dropdown.addEventListener('mouseenter', () => canHover.matches && open());
+    dropdown.addEventListener('mouseleave', () => {
+      // Keep it open if the keyboard is still somewhere inside it.
+      if (canHover.matches && !dropdown.contains(document.activeElement)) close();
+    });
+
+    // Close when focus leaves the menu entirely, so tabbing past it tidies up.
+    dropdown.addEventListener('focusout', (event) => {
+      if (!dropdown.contains(event.relatedTarget)) close();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && dropdown.classList.contains('is-open')) {
+        close();
+        toggle.focus();
+      }
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!dropdown.contains(event.target)) close();
+    });
+  }
+
+  // ---- Phone menu --------------------------------------------------------
+  const menuToggle = document.querySelector('[data-menu-toggle]');
+  const mobileMenu = document.querySelector('[data-mobile-menu]');
+
+  if (menuToggle && mobileMenu) {
+    const setMenu = (isOpen) => {
+      mobileMenu.hidden = !isOpen;
+      menuToggle.setAttribute('aria-expanded', String(isOpen));
+      // Stop the page behind scrolling while the menu covers it.
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    };
+
+    menuToggle.addEventListener('click', () => {
+      setMenu(mobileMenu.hidden);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !mobileMenu.hidden) {
+        setMenu(false);
+        menuToggle.focus();
+      }
+    });
+
+    // If the window grows to desktop width while the menu is open, tidy up.
+    window.matchMedia('(min-width: 900px)').addEventListener('change', (event) => {
+      if (event.matches && !mobileMenu.hidden) setMenu(false);
+    });
+  }
+</script>

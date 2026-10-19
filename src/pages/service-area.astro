@@ -1,0 +1,147 @@
+---
+/**
+ * Service Area.
+ *
+ * A short intro, then every town with one line about what we do there. The
+ * town names are written out plainly because that is what helps people find
+ * us when they search for care in their own town.
+ */
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import ClosingCta from '../components/ClosingCta.astro';
+import { business, serviceAreas } from '../data/site.js';
+---
+
+<Base
+  title="Service Area"
+  description="In-home pet and property care across Coeur d'Alene, Hayden, Post Falls, Rathdrum, Sandpoint, Sagle, Harrison, Bonners Ferry and the Spokane area."
+>
+  <PageHero
+    title="Where We Serve"
+    line="North Idaho, and just over the line into Washington."
+    photo="service-area-hero.jpg"
+    photoAlt=""
+    art="butterfly-side"
+  />
+
+  <section class="section">
+    <div class="wrap wrap--narrow center">
+      <p class="intro">
+        We are based in North Idaho and most of our stays are within about an
+        hour of Coeur d&rsquo;Alene. [confirm] If you are further out, ask
+        anyway. We have driven a long way for the right household, and we would
+        rather tell you yes or no honestly than have you assume.
+      </p>
+    </div>
+  </section>
+
+  <section class="section band-cream">
+    <div class="wrap">
+      <div class="center section__head">
+        <p class="eyebrow">Town by town</p>
+        <h2>Towns we work in</h2>
+      </div>
+
+      <ul class="areas">
+        {
+          serviceAreas.map((area) => (
+            <li class="areas__item">
+              <h3 class="areas__name">{area.name}</h3>
+              <p class="areas__line">{area.line}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section center">
+    <div class="wrap wrap--narrow">
+      <p class="travel">{business.travelNote}</p>
+      <p class="travel__note">
+        Somewhere not on this list? Tell us where you are. The worst we will say
+        is that we cannot make it work.
+      </p>
+      <p class="travel__actions">
+        <a class="btn btn--filled" href="/request-care/">Ask about your town</a>
+      </p>
+    </div>
+  </section>
+
+  <ClosingCta
+    heading="Planning time away from North Idaho?"
+    line="Free meet-and-greet before every first booking. No deposit needed to talk."
+  />
+</Base>
+
+<style>
+  .intro {
+    max-width: 54ch;
+    margin-inline: auto;
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 2.6vw, 1.5rem);
+    line-height: 1.5;
+    color: var(--olive-ink);
+  }
+
+  .section__head {
+    margin-bottom: var(--space-md);
+  }
+
+  .areas {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+    list-style: none;
+    margin: var(--space-lg) 0 0;
+    padding: 0;
+  }
+
+  @media (min-width: 680px) {
+    .areas {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-lg) var(--space-xl);
+    }
+  }
+
+  @media (min-width: 1020px) {
+    .areas {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .areas__item {
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--hairline);
+  }
+
+  .areas__name {
+    margin: 0 0 0.35rem;
+    font-size: clamp(1.15rem, 2.4vw, 1.4rem);
+    letter-spacing: 0.04em;
+    text-transform: none;
+  }
+
+  .areas__line {
+    margin: 0;
+    font-size: 0.92em;
+    color: var(--charcoal);
+  }
+
+  .travel {
+    margin-bottom: var(--space-sm);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.3rem, 3.2vw, 1.9rem);
+    color: var(--olive);
+  }
+
+  .travel__note {
+    max-width: 44ch;
+    margin-inline: auto;
+  }
+
+  .travel__actions {
+    margin-top: var(--space-lg);
+  }
+</style>

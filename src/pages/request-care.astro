@@ -1,0 +1,54 @@
+---
+/**
+ * Request Care.
+ *
+ * The booking flow that came over in the handoff, now sitting inside the site
+ * rather than beside it. It gets the site header, the site footer, and the
+ * site's colours and fonts.
+ *
+ * The flow itself is untouched. Every question, every word and every price
+ * still comes from the three scripts in public/js/, exactly as delivered.
+ * Those scripts build the questions into #q and the running plan into #plan.
+ */
+import Base from '../layouts/Base.astro';
+import '../styles/request-care.css';
+---
+
+<Base
+  title="Request Care"
+  description="Request pet, farm and home care in North Idaho. Build your care plan and see your estimate in a few minutes."
+>
+  <section class="section">
+    <div class="rc">
+      <div class="wrap">
+        <div class="rc-head">
+          <button class="linkbtn" id="restart" type="button">Start over</button>
+        </div>
+
+        <div class="grid">
+          {/* The scripts fill these two in. A div rather than a main element,
+              because the page already has one further up. */}
+          <div class="q" id="q" aria-live="polite"></div>
+          <aside class="plan" id="plan" aria-label="Your care plan"></aside>
+        </div>
+      </div>
+
+      {/* The running total that sits along the bottom on a phone. */}
+      <div class="mbar" id="mbar">
+        <div><span>Estimated total</span><strong id="mtotal">$0</strong></div>
+        <button class="btn ghost" id="mtoggle" type="button">See care plan</button>
+      </div>
+    </div>
+  </section>
+  {/* Left exactly as delivered. Totals come from PRICING in
+      bhfl-pricing-engine.js, and the prices shown in the question text live in
+      request-care.js. Change both when a price changes, then run
+      npm run test:pricing */}
+  <script is:inline src="/js/bhfl-pricing-engine.js"></script>
+  <script is:inline src="/js/bhfl-pet-options.js"></script>
+  <script is:inline src="/js/request-care.js"></script>
+
+  {/* Added here, not part of the handoff: connects "Send my request" to the
+      email function on Vercel. Holds no key of its own. */}
+  <script is:inline src="/js/bhfl-send-request.js"></script>
+</Base>

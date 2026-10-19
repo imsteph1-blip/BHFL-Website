@@ -1,0 +1,183 @@
+---
+/**
+ * Reviews.
+ *
+ * Every card here is empty on purpose. Nothing on this page is invented, and
+ * nothing should be. Stephanie pastes real words from real clients over the
+ * placeholders and deletes the brackets.
+ *
+ * To add a card, copy one line in the list below. To remove one, delete it.
+ */
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import ClosingCta from '../components/ClosingCta.astro';
+import { business } from '../data/site.js';
+
+// Six empty slots to start with.
+const slots = [
+  { service: 'Overnight pet care' },
+  { service: 'Home & property watch' },
+  { service: 'Farm & homestead care' },
+  { service: 'Drop-in visits' },
+  { service: 'Pet transportation' },
+  { service: 'Overnight pet care' },
+];
+---
+
+<Base
+  title="Reviews"
+  description="What families across North Idaho say about in-home pet and property care from Because He First Loved."
+>
+  <PageHero
+    title="Kind Words"
+    line="From the families and animals who let us in."
+    photo="reviews-hero.jpg"
+    photoAlt=""
+    art="butterfly-front"
+  />
+
+  <section class="section">
+    <div class="wrap">
+      <div class="center section__head">
+        <p class="eyebrow">{business.trust[2]}</p>
+        <h2>What people say</h2>
+      </div>
+
+      <ul class="cards">
+        {
+          slots.map((slot) => (
+            <li>
+              <figure class="card">
+                <blockquote class="card__quote">
+                  <p>[Paste real review here]</p>
+                </blockquote>
+                <figcaption class="card__by">
+                  <span class="card__name">[Client name]</span>
+                  <span class="card__meta">[Town] &middot; {slot.service}</span>
+                </figcaption>
+              </figure>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  {/* Room for a Google reviews link later -------------------------------- */}
+  <section class="section band-cream center">
+    <div class="wrap wrap--narrow">
+      <p class="eyebrow">Read more</p>
+      <h2>See our reviews in full</h2>
+      <p class="google__line">
+        [confirm: paste the link to your Google Business Profile here, and this
+        button will take people straight to your reviews. Until then this
+        section can be deleted.]
+      </p>
+      <p class="google__actions">
+        <span class="btn is-disabled" aria-disabled="true">Read our Google reviews</span>
+      </p>
+    </div>
+  </section>
+
+  <ClosingCta
+    heading="We would love to be your people."
+    line="Free meet-and-greet before every first booking. No deposit needed to talk."
+  />
+</Base>
+
+<style>
+  .section__head {
+    margin-bottom: var(--space-lg);
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 680px) {
+    .cards {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (min-width: 1020px) {
+    .cards {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-md);
+    height: 100%;
+    margin: 0;
+    padding: var(--space-lg);
+    border: 1px solid var(--hairline);
+    border-radius: 3px;
+    background: var(--warm-white);
+  }
+
+  .card__quote {
+    margin: 0;
+  }
+
+  .card__quote p {
+    margin: 0;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(1.15rem, 2.4vw, 1.4rem);
+    line-height: 1.4;
+    color: var(--olive-ink);
+  }
+
+  .card__by {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .card__name {
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--caption);
+  }
+
+  .card__meta {
+    font-size: 0.8rem;
+    color: var(--caption);
+  }
+
+  /* ---- Google reviews ---------------------------------------------------- */
+
+  .google__line {
+    max-width: 50ch;
+    margin-inline: auto;
+    font-size: 0.92em;
+    color: var(--caption);
+  }
+
+  .google__actions {
+    margin-top: var(--space-lg);
+  }
+
+  /* Not a link yet, because there is nowhere for it to go. Styled so it is
+     plainly inactive rather than looking broken. */
+  .is-disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .is-disabled:hover {
+    background: transparent;
+    color: var(--olive);
+  }
+</style>

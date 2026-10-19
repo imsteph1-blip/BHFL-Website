@@ -1,1 +1,9 @@
 .DS_Store
+node_modules/
+dist/
+.astro/
+.vercel/
+.claude/
+
+# Internal handoff notes and rate sheet. Never published.
+BHFL_Request_Care_Handoff/

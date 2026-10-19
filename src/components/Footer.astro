@@ -1,0 +1,252 @@
+---
+/**
+ * The footer that sits on every page.
+ *
+ * Dark bark background, the wordmark on one line with the butterfly and lilies
+ * above it, a thin strip of square photos for Instagram later, then the links
+ * in three short columns, the phone and email, the towns, and the verse the
+ * business is named for.
+ */
+import { business, footerColumns } from '../data/site.js';
+import Photo from './Photo.astro';
+
+const year = new Date().getFullYear();
+
+// Six square slots for future Instagram photos.
+const squares = Array.from({ length: 6 }, (_, i) => `instagram-${i + 1}.jpg`);
+---
+
+<footer class="site-footer band-bark">
+  <div class="wrap">
+    <div class="footer-mark">
+      <img
+        class="footer-mark__art art"
+        src="/images/brand/prepared/butterfly-lily-wide-cream.png"
+        alt=""
+        width="400"
+        height="258"
+        aria-hidden="true"
+      />
+      <p class="footer-mark__name">Because He First Loved</p>
+      <p class="footer-mark__tagline">
+        {business.tagline} &middot; {business.region}
+      </p>
+    </div>
+  </div>
+
+  <!-- A thin strip of square photos. Instagram will feed this later. -->
+  <ul class="footer-squares" aria-label="Recent photos">
+    {
+      squares.map((file) => (
+        <li>
+          <Photo src={file} alt="" ratio="1 / 1" tone="dark" />
+        </li>
+      ))
+    }
+  </ul>
+
+  <div class="wrap">
+    <nav class="footer-nav" aria-label="Footer">
+      {
+        footerColumns.map((column) => (
+          <div class="footer-nav__column">
+            {/* A plain label rather than a heading, so the footer does not add
+                three headings to every page's outline. The list points at it
+                so screen readers still announce the group by name. */}
+            <p class="footer-nav__title" id={`footer-${column.title.toLowerCase()}`}>
+              {column.title}
+            </p>
+            <ul aria-labelledby={`footer-${column.title.toLowerCase()}`}>
+              {column.links.map((link) => (
+                <li>
+                  <a href={link.href}>{link.name}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </nav>
+
+    <div class="footer-contact">
+      <a class="footer-contact__phone" href={`tel:${business.phoneLink}`}>{business.phone}</a>
+      <a href={`mailto:${business.email}`}>{business.email}</a>
+    </div>
+
+    <p class="footer-area">
+      {`Serving ${business.towns.slice(0, -2).join(', ')} and the Spokane area. ${business.travelNote}`}
+    </p>
+
+    <p class="footer-verse">
+      <em>&ldquo;{business.verse}&rdquo;</em> &middot; {business.verseRef}
+    </p>
+
+    <p class="footer-legal">
+      &copy; {year} {business.name}. All rights reserved.
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding-top: var(--space-lg);
+    padding-bottom: var(--space-lg);
+    text-align: center;
+  }
+
+  /* ---- Wordmark ---- */
+
+  .footer-mark {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .footer-mark__art {
+    width: auto;
+    height: clamp(52px, 9vw, 86px);
+    margin-bottom: 0.6rem;
+    opacity: 0.9;
+  }
+
+  /* One line at every width. The smallest size is set by what actually fits
+     across a phone screen, since the name is long. */
+  .footer-mark__name {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(1.32rem, 0.35rem + 4.2vw, 3.8rem);
+    line-height: 1.1;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cream);
+    white-space: nowrap;
+  }
+
+  .footer-mark__tagline {
+    margin: 0.5rem 0 0;
+    font-size: clamp(0.6rem, 0.57rem + 0.14vw, 0.66rem);
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: rgba(244, 239, 227, 0.72);
+  }
+
+  /* ---- Row of square photos ---- */
+
+  .footer-squares {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    list-style: none;
+    margin: var(--space-lg) 0;
+    padding: 0;
+  }
+
+  @media (min-width: 700px) {
+    .footer-squares {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+
+  /* ---- Links, in three columns ---- */
+
+  .footer-nav {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-lg);
+    text-align: center;
+  }
+
+  @media (min-width: 640px) {
+    .footer-nav {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-md);
+    }
+  }
+
+  .footer-nav__title {
+    margin: 0 0 0.75rem;
+    font-family: var(--font-body);
+    /* Looks like a heading without being one. */
+    font-size: clamp(0.64rem, 0.61rem + 0.14vw, 0.7rem);
+    font-weight: 400;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--cream);
+  }
+
+  .footer-nav ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .footer-nav a {
+    font-size: clamp(0.66rem, 0.63rem + 0.14vw, 0.72rem);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(244, 239, 227, 0.82);
+    text-decoration: none;
+    transition: color 0.18s ease;
+  }
+
+  .footer-nav a:hover {
+    color: var(--cream);
+  }
+
+  /* ---- Contact ---- */
+
+  .footer-contact {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    padding-top: var(--space-md);
+    padding-bottom: var(--space-md);
+    border-top: 1px solid var(--hairline-dark);
+  }
+
+  .footer-contact a {
+    color: var(--cream);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+  }
+
+  .footer-contact__phone {
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 1.15rem + 1.1vw, 1.9rem);
+    letter-spacing: 0.1em;
+  }
+
+  .footer-contact a:hover {
+    text-decoration: underline;
+  }
+
+  /* ---- Fine print ---- */
+
+  .footer-area {
+    max-width: 44rem;
+    margin: 0 auto;
+    font-size: clamp(0.76rem, 0.72rem + 0.18vw, 0.8rem);
+    line-height: 1.8;
+    color: rgba(244, 239, 227, 0.68);
+  }
+
+  .footer-verse {
+    margin: var(--space-md) 0 0;
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 0.92rem + 0.35vw, 1.2rem);
+    color: rgba(244, 239, 227, 0.86);
+  }
+
+  .footer-legal {
+    margin: var(--space-lg) 0 0;
+    font-size: clamp(0.6rem, 0.57rem + 0.14vw, 0.64rem);
+    letter-spacing: 0.12em;
+    color: rgba(244, 239, 227, 0.68);
+  }
+</style>

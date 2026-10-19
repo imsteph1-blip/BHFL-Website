@@ -1,0 +1,84 @@
+---
+/**
+ * The photo hero that sits at the top of a page.
+ *
+ * Shorter than the homepage hero, but the same idea: a photo, a dark wash over
+ * it so the words stay readable whatever the photo turns out to be, the
+ * butterfly crest, a title and one line underneath.
+ */
+import Photo from './Photo.astro';
+
+const {
+  title,
+  line,
+  photo,
+  photoAlt = '',
+  art = 'butterfly-front',
+} = Astro.props;
+---
+
+<section class="page-hero">
+  <Photo src={photo} alt={photoAlt} fill loading="eager" />
+  <div class="page-hero__scrim"></div>
+
+  <div class="page-hero__inner wrap wrap--narrow">
+    <img
+      class="page-hero__crest art"
+      src={`/images/brand/prepared/${art}-cream.png`}
+      alt=""
+      aria-hidden="true"
+    />
+    <h1>{title}</h1>
+    {line && <p class="page-hero__line">{line}</p>}
+  </div>
+</section>
+
+<style>
+  .page-hero {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 54svh;
+    padding-block: var(--space-xl);
+    background: var(--khaki-band);
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .page-hero__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(40, 38, 30, 0.46) 0%,
+      rgba(40, 38, 30, 0.32) 50%,
+      rgba(40, 38, 30, 0.5) 100%
+    );
+  }
+
+  .page-hero__inner {
+    position: relative;
+    color: var(--cream);
+  }
+
+  .page-hero__crest {
+    height: clamp(34px, 5vw, 50px);
+    width: auto;
+    margin: 0 auto var(--space-sm);
+  }
+
+  .page-hero h1 {
+    margin-bottom: var(--space-sm);
+    color: var(--cream);
+    font-size: clamp(1.9rem, 5vw, 3.4rem);
+    text-shadow: 0 1px 26px rgba(30, 28, 22, 0.42);
+  }
+
+  .page-hero__line {
+    max-width: 36ch;
+    margin: 0 auto;
+    font-size: clamp(0.98rem, 2.1vw, 1.15rem);
+    color: rgba(252, 250, 244, 0.94);
+    text-shadow: 0 1px 18px rgba(30, 28, 22, 0.45);
+  }
+</style>

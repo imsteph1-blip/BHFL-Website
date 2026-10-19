@@ -1,0 +1,80 @@
+---
+/**
+ * Contact / Request Care.
+ *
+ * A short welcome, then the form. The form does the work here, so there is
+ * nothing above it competing for attention.
+ */
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import RequestForm from '../components/RequestForm.astro';
+import ClosingCta from '../components/ClosingCta.astro';
+import { business } from '../data/site.js';
+---
+
+<Base
+  title="Request Care"
+  description="Tell us about your home, your dates and your animals. In-home pet and property care across North Idaho. Free meet-and-greet, and no deposit to talk."
+>
+  <PageHero
+    title="Request Care"
+    line="Tell us about your home, your dates and your animals."
+    photo="contact-hero.jpg"
+    photoAlt=""
+    art="butterfly-lily-wide"
+  />
+
+  {/* SECTION 1: Intro ---------------------------------------------------- */}
+  <section class="section">
+    <div class="wrap wrap--narrow center">
+      <h2>Tell us how we can serve you best</h2>
+
+      <p class="intro">
+        Every home and every family is different, and we want to know yours.
+        We would love to learn how your home, property and pets can best be
+        cared for in our hands.
+      </p>
+
+      <p class="intro">
+        This form tells us the little details that matter, so we can come
+        prepared and care for everything just the way you would. The more you
+        share, the better we can care for what you love. Your answers help us
+        understand your needs before we ever walk through the door.
+      </p>
+
+      <p class="intro intro--quiet">
+        You are always welcome to call or text us at
+        {' '}<a href={`tel:${business.phoneLink}`}>{business.phone}</a>.
+      </p>
+    </div>
+  </section>
+
+  {/* The form ------------------------------------------------------------- */}
+  <section class="section band-cream">
+    <div class="wrap wrap--narrow">
+      <RequestForm />
+    </div>
+  </section>
+
+  <ClosingCta
+    heading="Your animals should meet us before they need us."
+    line="That is what the free meet-and-greet is for. No deposit, and no obligation."
+  />
+</Base>
+
+<style>
+  .intro {
+    max-width: 54ch;
+    margin-inline: auto;
+  }
+
+  .intro--quiet {
+    margin-top: var(--space-md);
+    font-size: 0.94em;
+    color: var(--caption);
+  }
+
+  .intro--quiet a {
+    white-space: nowrap;
+  }
+</style>

@@ -1,0 +1,114 @@
+---
+/**
+ * The closing panel that ends most pages: a full-width photo, one heading,
+ * an outlined button and the phone number underneath.
+ *
+ * The homepage and all four service pages use this, so the last thing every
+ * visitor sees is the same invitation.
+ */
+import Photo from './Photo.astro';
+import { business } from '../data/site.js';
+
+const {
+  heading = 'Planning time away? Let’s talk about your home and your animals.',
+  line = 'Free meet-and-greet before every first booking. No deposit needed to talk.',
+  photo = 'closing-cta.jpg',
+  art = 'butterfly-lily-wide',
+} = Astro.props;
+---
+
+<section class="closing">
+  <Photo src={photo} alt="" fill />
+  <div class="closing__scrim"></div>
+
+  <div class="closing__inner wrap wrap--narrow center">
+    <img
+      class="closing__art art"
+      src={`/images/brand/prepared/${art}-cream.png`}
+      alt=""
+      aria-hidden="true"
+    />
+    <h2>{heading}</h2>
+    <p class="closing__line">{line}</p>
+    <p class="closing__actions">
+      <a class="btn" href="/request-care/">Request care</a>
+    </p>
+    <a class="closing__phone" href={`tel:${business.phoneLink}`}>{business.phone}</a>
+  </div>
+</section>
+
+<style>
+  .closing {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 70svh;
+    padding-block: var(--space-2xl);
+    background: var(--bark);
+    overflow: hidden;
+  }
+
+  .closing__scrim {
+    position: absolute;
+    inset: 0;
+    background: rgba(40, 38, 30, 0.52);
+  }
+
+  .closing__inner {
+    position: relative;
+    color: var(--cream);
+  }
+
+  .closing__art {
+    height: clamp(52px, 8vw, 78px);
+    width: auto;
+    margin: 0 auto var(--space-md);
+    opacity: 0.9;
+  }
+
+  .closing h2 {
+    max-width: 20ch;
+    margin-inline: auto;
+    color: var(--cream);
+    text-transform: none;
+    font-size: clamp(1.7rem, 4.4vw, 3rem);
+    letter-spacing: 0.03em;
+    text-shadow: 0 1px 24px rgba(30, 28, 22, 0.4);
+  }
+
+  .closing__line {
+    max-width: 38ch;
+    margin-inline: auto;
+    font-size: 0.95rem;
+    color: rgba(252, 250, 244, 0.92);
+  }
+
+  .closing__actions {
+    margin-top: var(--space-lg);
+  }
+
+  .closing .btn {
+    border-color: var(--cream);
+    color: var(--cream);
+  }
+
+  .closing .btn:hover {
+    background: var(--cream);
+    color: var(--olive-ink);
+  }
+
+  .closing__phone {
+    display: inline-block;
+    margin-top: var(--space-md);
+    font-family: var(--font-display);
+    font-size: clamp(1.3rem, 3vw, 1.7rem);
+    letter-spacing: 0.1em;
+    color: var(--cream);
+    text-decoration: none;
+  }
+
+  .closing__phone:hover {
+    color: var(--cream);
+    text-decoration: underline;
+  }
+</style>

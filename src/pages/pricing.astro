@@ -1,0 +1,234 @@
+---
+/**
+ * Pricing.
+ *
+ * Calm and confident: what things start at, what every stay comes with, and
+ * an invitation to get a real quote. The numbers live in src/data/pricing.js
+ * and all of them still need confirming.
+ */
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import ClosingCta from '../components/ClosingCta.astro';
+import { rates, included, notes } from '../data/pricing.js';
+---
+
+<Base
+  title="Pricing"
+  description="Starting rates for in-home pet care, house sitting, farm and homestead care and pet transportation across North Idaho. Free meet-and-greet, and no deposit."
+>
+  <PageHero
+    title="Pricing"
+    line="What things start at, and what every stay comes with."
+    photo="pricing-hero.jpg"
+    photoAlt=""
+    art="lily"
+  />
+
+  {/* The rates ----------------------------------------------------------- */}
+  <section class="section">
+    <div class="wrap wrap--narrow">
+      <div class="center section__head">
+        <p class="eyebrow">Starting from</p>
+        <h2>Our rates</h2>
+        <p class="section__lead">
+          Every home is different, so these are starting points rather than
+          final numbers. You get a real quote after the meet-and-greet, once we
+          know what we are actually looking after.
+        </p>
+      </div>
+
+      <table class="rates">
+        <caption class="visually-hidden">Starting rates by service</caption>
+        <thead>
+          <tr>
+            <th scope="col">Service</th>
+            <th scope="col">Starting at</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            rates.map((rate) => (
+              <tr>
+                <th scope="row">{rate.service}</th>
+                <td>{rate.price}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+
+      <p class="rates__confirm">[confirm every price on this page before launch]</p>
+    </div>
+  </section>
+
+  {/* What every stay comes with ------------------------------------------ */}
+  <section class="section band-cream">
+    <div class="wrap wrap--narrow">
+      <div class="center section__head">
+        <p class="eyebrow">Whatever it costs</p>
+        <h2>What every stay comes with</h2>
+      </div>
+
+      <ul class="included">
+        {included.map((item) => <li>{item}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  {/* The small print ------------------------------------------------------ */}
+  <section class="section">
+    <div class="wrap wrap--narrow">
+      <p class="eyebrow center">Worth knowing</p>
+      <ul class="notes">
+        {notes.map((note) => <li>{note}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  {/* Get a quote ---------------------------------------------------------- */}
+  <section class="section band-khaki center">
+    <div class="wrap wrap--narrow">
+      <h2>Request your custom quote</h2>
+      <p class="quote__line">
+        Tell us your dates, your town and who we would be looking after. We will
+        come back with a real number, and a free meet-and-greet before you decide
+        anything.
+      </p>
+      <p class="quote__actions">
+        <a class="btn" href="/request-care/">Request care</a>
+      </p>
+    </div>
+  </section>
+
+  <ClosingCta
+    heading="Not sure which one you need?"
+    line="Tell us what is happening and we will point you at the right thing, even if it is the cheaper one."
+  />
+</Base>
+
+<style>
+  .section__head {
+    margin-bottom: var(--space-lg);
+  }
+
+  .section__lead {
+    max-width: 50ch;
+    margin-inline: auto;
+  }
+
+  /* ---- The rate table ---------------------------------------------------- */
+
+  .rates {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  .rates thead th {
+    padding-bottom: 0.7rem;
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--caption);
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .rates thead th:last-child,
+  .rates td {
+    text-align: right;
+  }
+
+  .rates tbody th {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(1.02rem, 2.2vw, 1.2rem);
+    letter-spacing: 0.02em;
+    color: var(--olive-ink);
+  }
+
+  .rates tbody th,
+  .rates td {
+    padding: 0.95rem 0;
+    border-bottom: 1px solid var(--hairline);
+    vertical-align: baseline;
+  }
+
+  .rates td {
+    padding-left: var(--space-sm);
+    white-space: nowrap;
+    font-size: 0.92em;
+    color: var(--charcoal);
+  }
+
+  .rates__confirm {
+    margin-top: var(--space-md);
+    font-size: 0.74rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--caption);
+    text-align: center;
+  }
+
+  /* ---- What every stay comes with ---------------------------------------- */
+
+  .included {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 640px) {
+    .included {
+      grid-template-columns: 1fr 1fr;
+      gap: 0.7rem var(--space-lg);
+    }
+  }
+
+  .included li {
+    position: relative;
+    padding-left: 1.4em;
+  }
+
+  .included li::before {
+    content: '+';
+    position: absolute;
+    left: 0;
+    color: var(--olive);
+  }
+
+  /* ---- The small print ---------------------------------------------------- */
+
+  .notes {
+    max-width: 56ch;
+    margin: var(--space-md) auto 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .notes li {
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid var(--hairline);
+    font-size: 0.94em;
+    color: var(--charcoal);
+  }
+
+  .notes li:last-child {
+    border-bottom: 0;
+  }
+
+  /* ---- Get a quote -------------------------------------------------------- */
+
+  .quote__line {
+    max-width: 46ch;
+    margin-inline: auto;
+  }
+
+  .quote__actions {
+    margin-top: var(--space-lg);
+  }
+</style>

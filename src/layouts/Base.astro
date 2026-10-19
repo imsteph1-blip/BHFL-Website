@@ -1,0 +1,78 @@
+---
+/**
+ * The shell every page sits inside: the page title and description Google
+ * reads, the fonts, the announcement bar, the header, and the footer.
+ *
+ * A page only has to supply its own title, description and content.
+ */
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { business } from '../data/site.js';
+
+const {
+  title,
+  description,
+  // TODO confirm the announcement wording before launch
+  announcement = 'Now booking holiday stays',
+} = Astro.props;
+
+const fullTitle = `${title} | ${business.name}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={business.name} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Nunito+Sans:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    {
+      announcement && (
+        <p class="announcement">{announcement}</p>
+      )
+    }
+
+    <Header />
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <Footer />
+  </body>
+</html>
+
+<style>
+  .announcement {
+    margin: 0;
+    padding: 0.85em var(--gutter);
+    background: var(--khaki);
+    color: var(--cream);
+    text-align: center;
+    font-size: 0.66rem;
+    font-weight: 400;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+</style>

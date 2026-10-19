@@ -1,0 +1,252 @@
+---
+/**
+ * The services box, Kindling style: one outlined box with tabs across the top.
+ * Pick a tab and that service shows, photo on the left, the words on the right.
+ *
+ * Built the way screen readers and keyboards expect tabs to work: left and
+ * right arrows move between tabs, Home and End jump to the ends.
+ */
+import Photo from './Photo.astro';
+import { serviceDetails } from '../data/services.js';
+---
+
+<div class="tabs">
+  <div class="tabs__row" role="tablist" aria-label="Our services">
+    {
+      serviceDetails.map((service, i) => (
+        <button
+          type="button"
+          role="tab"
+          id={`tab-${service.slug}`}
+          aria-controls={`panel-${service.slug}`}
+          aria-selected={i === 0 ? 'true' : 'false'}
+          tabindex={i === 0 ? 0 : -1}
+          class="tabs__tab"
+        >
+          {service.name}
+        </button>
+      ))
+    }
+  </div>
+
+  {
+    serviceDetails.map((service, i) => (
+      <div
+        role="tabpanel"
+        id={`panel-${service.slug}`}
+        aria-labelledby={`tab-${service.slug}`}
+        class="tabs__panel"
+        hidden={i !== 0}
+      >
+        <div class="tabs__media">
+          <Photo src={service.photo} alt={service.photoAlt} ratio="4 / 5" />
+        </div>
+
+        <div class="tabs__body">
+          <img
+            class="tabs__art art"
+            src={`/images/brand/prepared/${service.art}-olive.png`}
+            alt=""
+            aria-hidden="true"
+          />
+          <h3>{service.name}</h3>
+          <p>{service.blurb}</p>
+
+          <p class="tabs__label">This is for you if</p>
+          <ul class="tabs__list">
+            {service.forYouIf.map((line) => (
+              <li>{line}</li>
+            ))}
+          </ul>
+
+          {service.honestNote && <p class="tabs__note">{service.honestNote}</p>}
+
+          <a class="btn tabs__cta" href={service.href}>
+            Learn more
+          </a>
+        </div>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .tabs {
+    border: 1px solid var(--hairline);
+    border-radius: 3px;
+    background: var(--warm-white);
+  }
+
+  /* ---- The row of tabs ---- */
+
+  .tabs__row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  @media (min-width: 860px) {
+    .tabs__row {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .tabs__tab {
+    padding: 1.15em 0.9em;
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--caption);
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--hairline);
+    border-right: 1px solid var(--hairline);
+    cursor: pointer;
+    transition: background-color 0.18s ease, color 0.18s ease;
+  }
+
+  /* The inner grid lines should not double up on the outer edges. */
+  .tabs__tab:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .tabs__tab:nth-last-child(-n + 2) {
+    border-bottom: 0;
+  }
+
+  @media (min-width: 860px) {
+    .tabs__tab {
+      border-bottom: 0;
+    }
+
+    .tabs__tab:nth-child(2n) {
+      border-right: 1px solid var(--hairline);
+    }
+
+    .tabs__tab:last-child {
+      border-right: 0;
+    }
+  }
+
+  .tabs__tab:hover {
+    color: var(--olive-ink);
+  }
+
+  .tabs__tab[aria-selected='true'] {
+    background: var(--cream);
+    color: var(--olive-ink);
+  }
+
+  /* ---- The panel below ---- */
+
+  .tabs__panel {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+    padding: var(--space-lg);
+  }
+
+  .tabs__panel[hidden] {
+    display: none;
+  }
+
+  @media (min-width: 860px) {
+    .tabs__panel {
+      grid-template-columns: 0.85fr 1.15fr;
+      gap: var(--space-xl);
+      padding: var(--space-xl);
+      align-items: start;
+    }
+  }
+
+  .tabs__art {
+    height: 58px;
+    width: auto;
+    margin-bottom: var(--space-sm);
+  }
+
+  .tabs__body h3 {
+    margin-bottom: var(--space-sm);
+    text-transform: uppercase;
+  }
+
+  .tabs__label {
+    margin: var(--space-md) 0 var(--space-xs);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--caption);
+  }
+
+  .tabs__list {
+    margin: 0 0 var(--space-md);
+    padding: 0;
+    list-style: none;
+  }
+
+  .tabs__list li {
+    position: relative;
+    padding-left: 1.4em;
+    margin-bottom: 0.45em;
+    font-size: 0.96em;
+  }
+
+  .tabs__list li::before {
+    content: '+';
+    position: absolute;
+    left: 0;
+    color: var(--olive);
+  }
+
+  /* The plain-spoken line about what we do not do. */
+  .tabs__note {
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--hairline);
+    font-size: 0.9em;
+    color: var(--caption);
+  }
+
+  .tabs__cta {
+    margin-top: var(--space-md);
+  }
+</style>
+
+<script>
+  document.querySelectorAll('.tabs').forEach((box) => {
+    const tabs = [...box.querySelectorAll('[role="tab"]')];
+    const panels = [...box.querySelectorAll('[role="tabpanel"]')];
+
+    function select(index, moveFocus = true) {
+      tabs.forEach((tab, i) => {
+        const isCurrent = i === index;
+        tab.setAttribute('aria-selected', String(isCurrent));
+        // Only the selected tab is reachable by Tab, which is how a tab strip
+        // is meant to behave: Tab moves past it, arrows move within it.
+        tab.tabIndex = isCurrent ? 0 : -1;
+        panels[i].hidden = !isCurrent;
+      });
+      if (moveFocus) tabs[index].focus();
+    }
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => select(i, false));
+
+      tab.addEventListener('keydown', (event) => {
+        const last = tabs.length - 1;
+        let next = null;
+
+        if (event.key === 'ArrowRight') next = i === last ? 0 : i + 1;
+        else if (event.key === 'ArrowLeft') next = i === 0 ? last : i - 1;
+        else if (event.key === 'Home') next = 0;
+        else if (event.key === 'End') next = last;
+
+        if (next !== null) {
+          event.preventDefault();
+          select(next);
+        }
+      });
+    });
+  });
+</script>

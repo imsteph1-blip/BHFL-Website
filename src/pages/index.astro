@@ -1,0 +1,571 @@
+---
+/**
+ * The homepage, top to bottom, following the rhythm of thekindlingstudio.com:
+ * a full photo hero, then cream and khaki bands alternating all the way down.
+ *
+ * All of the writing here is a first draft in Stephanie's voice, meant to be
+ * reshaped. Anything marked [confirm] is a detail she needs to check.
+ */
+import Base from '../layouts/Base.astro';
+import Photo from '../components/Photo.astro';
+import ServiceTabs from '../components/ServiceTabs.astro';
+import Testimonials from '../components/Testimonials.astro';
+import Faq from '../components/Faq.astro';
+import ClosingCta from '../components/ClosingCta.astro';
+import { business } from '../data/site.js';
+---
+
+<Base
+  title="In-home Pet & Property Care in North Idaho"
+  description="In-home pet and property caretaking in Coeur d'Alene, Hayden, Post Falls, Sandpoint and across North Idaho. We stay in your home and care for what you love like it's our own."
+>
+  {/* 3. Hero ------------------------------------------------------------ */}
+  <section class="hero">
+    <Photo src="hero-home.jpg" alt="" fill loading="eager" />
+    <div class="hero__scrim"></div>
+
+    <div class="hero__inner wrap">
+      <img
+        class="hero__crest art"
+        src="/images/brand/prepared/butterfly-front-cream.png"
+        alt=""
+        aria-hidden="true"
+      />
+      <h1 class="hero__title">In-home pet &amp; property care across North Idaho</h1>
+      <p class="hero__line">
+        We stay in your home and care for what you love like it&rsquo;s our own.
+      </p>
+      <a class="hero__down" href="#caretaker">
+        <span>[meet us]</span>
+        <span class="hero__rule" aria-hidden="true"></span>
+      </a>
+    </div>
+  </section>
+
+  {/* 4. Trust strip ----------------------------------------------------- */}
+  <section class="trust">
+    <div class="wrap">
+      <ul class="trust__list">
+        {business.trust.map((fact) => <li>{fact}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  {/* 5. Caretaker, not sitter ------------------------------------------- */}
+  <section class="section" id="caretaker">
+    <div class="wrap split">
+      <div class="split__media">
+        <figure class="collage">
+          <div class="collage__big">
+            <Photo src="caretaker-main.jpg" alt="Stephanie sitting on the floor with a dog in its own home" ratio="4 / 5" />
+          </div>
+          <div class="collage__small">
+            <Photo src="caretaker-detail.jpg" alt="A cat asleep on a windowsill" ratio="1 / 1" />
+          </div>
+          <figcaption class="side-caption collage__caption">
+            In your home, not ours
+          </figcaption>
+        </figure>
+      </div>
+
+      <div class="split__body">
+        <p class="eyebrow">There is a difference</p>
+        <h2>Caretaker, not sitter</h2>
+
+        <div class="columns">
+          <div>
+            <p>
+              A sitter stops by. We move in. On an overnight stay we sleep in your
+              home, keep the lights and the routine normal, and your animals stay
+              in the one place that already smells like you.
+            </p>
+            <p>
+              Both of us come on overnight stays, [confirm] so your animals are
+              rarely alone and the house is never dark for long.
+            </p>
+          </div>
+          <div>
+            <p>
+              We look after the house while we are there. Mail and packages come
+              in, bins go out on the right day, plants get watered, and we walk
+              through the rooms with our eyes open.
+            </p>
+            <p>
+              You get photos and honest updates, and you come home to a house that
+              looks the way you left it.
+            </p>
+          </div>
+        </div>
+
+        <a class="bracket-link" href="/request-care/" data-label="request care">
+          <span class="bracket-link__arrow"></span>
+        </a>
+      </div>
+
+      <img
+        class="corner-sketch art"
+        src="/images/brand/prepared/lily-olive.png"
+        alt=""
+        aria-hidden="true"
+      />
+    </div>
+  </section>
+
+  {/* 6. What we believe ------------------------------------------------- */}
+  <section class="section--tall band-khaki believe">
+    <div class="believe__float believe__float--left">
+      <Photo src="believe-left.jpg" alt="" ratio="3 / 4" tone="dark" />
+    </div>
+    <div class="believe__float believe__float--right">
+      <Photo src="believe-right.jpg" alt="" ratio="3 / 4" tone="dark" />
+    </div>
+
+    <div class="wrap wrap--narrow center believe__inner">
+      <p class="eyebrow">What we believe</p>
+      <h2>Every home and every animal is entrusted to us</h2>
+      <p>
+        We treat your keys, your rooms and your animals the way we would want
+        ours treated. No parties, no extra guests, no shortcuts taken because
+        nobody is watching.
+      </p>
+      <p class="believe__cta">
+        <a class="btn" href="/our-story/">Read our story</a>
+      </p>
+    </div>
+  </section>
+
+  {/* 7. Our services ---------------------------------------------------- */}
+  <section class="section band-cream">
+    <div class="wrap">
+      <div class="center section__head">
+        <p class="eyebrow">Our services</p>
+        <h2>What we can take off your hands</h2>
+      </div>
+      <ServiceTabs />
+    </div>
+  </section>
+
+  {/* 8. Meet Stephanie and Luke ----------------------------------------- */}
+  <section class="section--tall band-khaki meet">
+    <div class="wrap meet__grid">
+      <figure class="meet__media">
+        <div class="meet__photo meet__photo--back">
+          <Photo src="our-story-stephanie-luke.jpg" alt="Stephanie and Luke outdoors in North Idaho" ratio="3 / 4" tone="dark" />
+        </div>
+        <div class="meet__photo meet__photo--front">
+          <Photo src="our-story-with-animals.jpg" alt="Stephanie with a dog and a cat" ratio="1 / 1" tone="dark" frame tilt={-4} />
+        </div>
+        <figcaption class="side-caption meet__caption">Meet the caretakers</figcaption>
+      </figure>
+
+      <div class="meet__card">
+        <p class="eyebrow">The two of us</p>
+        <h2 class="meet__title">Hi, we&rsquo;re Stephanie and Luke</h2>
+        <p>
+          I have loved animals since I was small enough to need a step stool to
+          see into the kennels. I started volunteering at the Humane Society as a
+          kid, [confirm] and thirteen years later I am still doing the same
+          thing, just with the keys to your house in my pocket.
+        </p>
+        <p>
+          Luke and I came to North Idaho from Oregon. [confirm] We take stays
+          together, which means your animals get two sets of hands and your home
+          is rarely empty.
+        </p>
+        <p>
+          The name comes from 1 John 4:19. It is the quiet reason we do this the
+          way we do.
+        </p>
+        <a class="bracket-link" href="/our-story/" data-label="read our story">
+          <span class="bracket-link__arrow"></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {/* 9. Reviews --------------------------------------------------------- */}
+  <section class="section">
+    <div class="wrap">
+      <Testimonials />
+    </div>
+  </section>
+
+  {/* 10. Where we serve -------------------------------------------------- */}
+  <section class="section band-cream">
+    <div class="wrap wrap--narrow center">
+      <p class="eyebrow">Where we serve</p>
+      <h2>North Idaho and just over the line</h2>
+      <ul class="towns">
+        {business.towns.map((town) => <li>{town}</li>)}
+      </ul>
+      <p class="towns__note">{business.travelNote}</p>
+      <a class="bracket-link" href="/service-area/" data-label="see the full area">
+        <span class="bracket-link__arrow"></span>
+      </a>
+    </div>
+  </section>
+
+  {/* 11. Questions ------------------------------------------------------- */}
+  <section class="section">
+    <div class="wrap wrap--narrow">
+      <div class="center section__head">
+        <p class="eyebrow">Before you book</p>
+        <h2>Questions we get asked</h2>
+      </div>
+      <Faq />
+    </div>
+  </section>
+
+  {/* 12. Closing call to action ------------------------------------------ */}
+  <ClosingCta />
+</Base>
+
+<style>
+  /* ---- 3. Hero ---------------------------------------------------------- */
+
+  .hero {
+    position: relative;
+    min-height: 88svh;
+    display: grid;
+    place-items: center;
+    padding-block: var(--space-2xl);
+    background: var(--khaki-band);
+    overflow: hidden;
+  }
+
+  /* Darkens the photo just enough that cream text stays readable on top of
+     it, whatever photo eventually goes in. */
+  .hero__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(40, 38, 30, 0.44) 0%,
+      rgba(40, 38, 30, 0.28) 45%,
+      rgba(40, 38, 30, 0.5) 100%
+    );
+  }
+
+  .hero__inner {
+    position: relative;
+    text-align: center;
+    color: var(--cream);
+  }
+
+  .hero__crest {
+    height: clamp(42px, 6vw, 64px);
+    width: auto;
+    margin: 0 auto var(--space-md);
+  }
+
+  .hero__title {
+    max-width: 16ch;
+    margin: 0 auto var(--space-md);
+    color: var(--cream);
+    font-size: clamp(2.1rem, 6vw, 4.2rem);
+    line-height: 1.14;
+    letter-spacing: 0.07em;
+    text-shadow: 0 1px 28px rgba(30, 28, 22, 0.4);
+  }
+
+  .hero__line {
+    max-width: 34ch;
+    margin: 0 auto;
+    font-size: clamp(1rem, 2.2vw, 1.2rem);
+    color: rgba(252, 250, 244, 0.94);
+    text-shadow: 0 1px 18px rgba(30, 28, 22, 0.45);
+  }
+
+  /* [meet us] with a thin line dropping below it. */
+  .hero__down {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.9rem;
+    margin-top: var(--space-xl);
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--cream);
+    text-decoration: none;
+  }
+
+  .hero__rule {
+    display: block;
+    width: 1px;
+    height: 46px;
+    background: rgba(244, 239, 227, 0.75);
+    transition: height 0.24s ease;
+  }
+
+  .hero__down:hover {
+    color: var(--cream);
+  }
+
+  .hero__down:hover .hero__rule {
+    height: 58px;
+  }
+
+  /* ---- 4. Trust strip --------------------------------------------------- */
+
+  .trust {
+    border-bottom: 1px solid var(--hairline);
+    background: var(--warm-white);
+  }
+
+  .trust__list {
+    display: grid;
+    grid-template-columns: 1fr;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+  }
+
+  @media (min-width: 720px) {
+    .trust__list {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .trust__list li {
+    padding: 1.6em 1rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--caption);
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .trust__list li:last-child {
+    border-bottom: 0;
+  }
+
+  @media (min-width: 720px) {
+    .trust__list li {
+      border-bottom: 0;
+      border-right: 1px solid var(--hairline);
+    }
+
+    .trust__list li:last-child {
+      border-right: 0;
+    }
+  }
+
+  /* ---- 5. Caretaker, not sitter ----------------------------------------- */
+
+  .split {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+    align-items: center;
+  }
+
+  @media (min-width: 900px) {
+    .split {
+      grid-template-columns: 0.85fr 1.15fr;
+      gap: var(--space-2xl);
+    }
+  }
+
+  /* Two photos at different sizes, the smaller one overlapping the corner. */
+  .collage {
+    position: relative;
+    margin: 0;
+    padding-left: 2.2rem;
+    padding-bottom: 2.5rem;
+  }
+
+  .collage__small {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 42%;
+    box-shadow: 0 8px 26px rgba(58, 58, 52, 0.14);
+  }
+
+  .collage__caption {
+    position: absolute;
+    top: 0;
+    left: -0.4rem;
+  }
+
+  @media (min-width: 900px) {
+    .collage__caption {
+      left: -1.2rem;
+    }
+  }
+
+  .columns {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+  }
+
+  @media (min-width: 640px) {
+    .columns {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-lg);
+    }
+  }
+
+  .columns p {
+    font-size: 0.96em;
+  }
+
+  /* A small drawing tucked into the corner, the way Kindling uses its match. */
+  .corner-sketch {
+    display: none;
+  }
+
+  @media (min-width: 1100px) {
+    .corner-sketch {
+      display: block;
+      position: absolute;
+      right: -1rem;
+      bottom: -2.5rem;
+      height: 96px;
+      width: auto;
+      opacity: 0.75;
+    }
+  }
+
+  /* ---- 6. What we believe ----------------------------------------------- */
+
+  .believe {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .believe__inner {
+    position: relative;
+  }
+
+  /* Two photos floating at the edges, behind the words. */
+  .believe__float {
+    display: none;
+  }
+
+  @media (min-width: 1000px) {
+    .believe__float {
+      display: block;
+      position: absolute;
+      width: 170px;
+      z-index: 0;
+    }
+
+    .believe__float--left {
+      left: 3%;
+      top: 16%;
+    }
+
+    .believe__float--right {
+      right: 3%;
+      bottom: 14%;
+    }
+  }
+
+  .believe__cta {
+    margin-top: var(--space-lg);
+  }
+
+  /* ---- 7. Section headings ---------------------------------------------- */
+
+  .section__head {
+    margin-bottom: var(--space-lg);
+  }
+
+  /* ---- 8. Meet Stephanie and Luke ---------------------------------------- */
+
+  .meet__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+    align-items: center;
+  }
+
+  @media (min-width: 900px) {
+    .meet__grid {
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: var(--space-2xl);
+    }
+  }
+
+  .meet__media {
+    position: relative;
+    margin: 0;
+    padding-left: 2.2rem;
+    padding-bottom: 3rem;
+  }
+
+  .meet__photo--front {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 52%;
+  }
+
+  .meet__caption {
+    position: absolute;
+    top: 0;
+    left: -0.4rem;
+    color: rgba(244, 239, 227, 0.85);
+  }
+
+  /* The cream card that holds the story. */
+  .meet__card {
+    background: var(--cream);
+    color: var(--charcoal);
+    padding: clamp(1.75rem, 5vw, 3.25rem);
+    border-radius: 3px;
+  }
+
+  /* Heads its own section, so it is an h2 for anyone reading the page with a
+     screen reader, but sized like a card heading. */
+  .meet__title {
+    color: var(--olive-ink);
+    margin-bottom: var(--space-md);
+    font-size: clamp(1.3rem, 2.6vw, 1.85rem);
+    letter-spacing: 0.04em;
+    text-transform: none;
+  }
+
+  .meet__card .eyebrow {
+    color: var(--caption);
+  }
+
+  .meet__card .bracket-link {
+    color: var(--olive);
+    margin-top: var(--space-sm);
+  }
+
+  /* ---- 10. Where we serve ------------------------------------------------ */
+
+  .towns {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1.4rem;
+    list-style: none;
+    margin: var(--space-md) 0 var(--space-md);
+    padding: 0;
+  }
+
+  .towns li {
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--caption);
+  }
+
+  .towns__note {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.1rem, 2.6vw, 1.45rem);
+    color: var(--olive);
+    margin-bottom: var(--space-md);
+  }
+
+</style>

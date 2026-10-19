@@ -1,0 +1,502 @@
+---
+/**
+ * A date field that opens a calendar, the way booking sites do.
+ *
+ * In "range" mode you click the first day, then the last day, and the days
+ * between light up. In "single" mode you click one day and it closes.
+ *
+ * Nobody has to type anything. Written by hand rather than pulled in from
+ * somewhere else, so it matches the rest of the site and stays small.
+ */
+const {
+  name,                 // becomes name-start and name-end in range mode
+  label,
+  mode = 'range',       // "range" or "single"
+  placeholder = 'Choose your dates',
+} = Astro.props;
+
+const id = `cal-${name}`;
+---
+
+<div class="cal" data-calendar data-mode={mode} data-name={name}>
+  <span class="field__label" id={`${id}-label`}>{label}</span>
+
+  {
+    mode === 'range' ? (
+      <>
+        <input type="hidden" name={`${name}-start`} data-cal-start />
+        <input type="hidden" name={`${name}-end`} data-cal-end />
+      </>
+    ) : (
+      <input type="hidden" name={name} data-cal-start />
+    )
+  }
+
+  <button
+    type="button"
+    class="cal__trigger"
+    aria-expanded="false"
+    aria-haspopup="dialog"
+    aria-labelledby={`${id}-label ${id}-value`}
+    data-cal-trigger
+  >
+    <span class="cal__value" id={`${id}-value`} data-cal-display>{placeholder}</span>
+    <span class="cal__icon" aria-hidden="true"></span>
+  </button>
+
+  <div class="cal__pop" role="dialog" aria-modal="false" aria-labelledby={`${id}-label`} hidden data-cal-pop>
+    <div class="cal__head">
+      <button type="button" class="cal__nav" data-cal-prev>
+        <span aria-hidden="true">&larr;</span>
+        <span class="visually-hidden">Previous month</span>
+      </button>
+      <p class="cal__month" aria-live="polite" data-cal-month></p>
+      <button type="button" class="cal__nav" data-cal-next>
+        <span aria-hidden="true">&rarr;</span>
+        <span class="visually-hidden">Next month</span>
+      </button>
+    </div>
+
+    <div class="cal__weekdays" aria-hidden="true">
+      <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+    </div>
+
+    <div class="cal__grid" role="grid" data-cal-grid></div>
+
+    <p class="cal__hint" data-cal-hint></p>
+
+    <div class="cal__foot">
+      <button type="button" class="link-button" data-cal-clear>Clear</button>
+      <button type="button" class="btn btn--small" data-cal-done>Done</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .cal {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: var(--space-md);
+  }
+
+  /* ---- The field you click ---- */
+
+  .cal__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    width: 100%;
+    padding: 0.85em 1em;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 300;
+    text-align: left;
+    color: var(--charcoal);
+    background: var(--warm-white);
+    border: 1px solid var(--hairline);
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  .cal__trigger:hover {
+    border-color: var(--olive);
+  }
+
+  .cal__trigger[aria-expanded='true'] {
+    border-color: var(--olive);
+  }
+
+  /* Grey while it still says "choose your dates", solid once a date is set. */
+  .cal__value {
+    color: var(--caption);
+  }
+
+  .cal.is-set .cal__value {
+    color: var(--charcoal);
+  }
+
+  /* A small calendar drawn in CSS, so there is no icon file to load. */
+  .cal__icon {
+    flex: none;
+    width: 15px;
+    height: 15px;
+    border: 1px solid var(--olive);
+    border-radius: 1px;
+    border-top-width: 4px;
+  }
+
+  /* ---- The calendar that drops down ---- */
+
+  .cal__pop {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 30;
+    width: min(21rem, calc(100vw - 2 * var(--gutter)));
+    margin-top: 0.4rem;
+    padding: var(--space-md);
+    background: var(--warm-white);
+    border: 1px solid var(--hairline);
+    border-radius: 3px;
+    box-shadow: 0 14px 34px rgba(58, 58, 52, 0.14);
+  }
+
+  .cal__pop[hidden] {
+    display: none;
+  }
+
+  .cal__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-sm);
+  }
+
+  .cal__month {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    letter-spacing: 0.04em;
+    color: var(--olive-ink);
+  }
+
+  .cal__nav {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    font-size: 1rem;
+    color: var(--olive);
+    background: none;
+    border: 1px solid var(--hairline);
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  .cal__nav:hover:not(:disabled) {
+    background: var(--cream);
+  }
+
+  .cal__nav:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .cal__weekdays,
+  .cal__grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+  }
+
+  .cal__weekdays {
+    margin-bottom: 0.3rem;
+  }
+
+  .cal__weekdays span {
+    padding: 0.4rem 0;
+    font-size: 0.64rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-align: center;
+    color: var(--caption);
+  }
+
+  /* ---- Days ---- */
+
+  .cal__grid :global(.cal__day) {
+    position: relative;
+    aspect-ratio: 1;
+    min-height: 40px;
+    font-family: var(--font-body);
+    font-size: 0.92rem;
+    font-weight: 300;
+    color: var(--charcoal);
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+
+  .cal__grid :global(.cal__day:hover:not(:disabled)) {
+    background: var(--cream);
+  }
+
+  .cal__grid :global(.cal__day:disabled) {
+    color: rgba(58, 58, 52, 0.28);
+    cursor: default;
+  }
+
+  /* Days between the two you picked. */
+  .cal__grid :global(.cal__day.in-range) {
+    background: var(--cream);
+  }
+
+  /* The first and last day you picked. */
+  .cal__grid :global(.cal__day.is-edge) {
+    background: var(--olive);
+    color: var(--cream);
+    border-radius: 2px;
+  }
+
+  .cal__grid :global(.cal__day.is-today::after) {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 6px;
+    width: 3px;
+    height: 3px;
+    margin-left: -1.5px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .cal__grid :global(.cal__day.is-blank) {
+    visibility: hidden;
+  }
+
+  .cal__hint {
+    margin: var(--space-sm) 0 0;
+    font-size: 0.78rem;
+    color: var(--caption);
+    text-align: center;
+  }
+
+  .cal__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    margin-top: var(--space-sm);
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--hairline);
+  }
+
+  /* On a phone the calendar takes the full width it can get. */
+  @media (max-width: 480px) {
+    .cal__pop {
+      width: 100%;
+    }
+
+    .cal__grid :global(.cal__day) {
+      min-height: 44px;
+    }
+  }
+</style>
+
+<script>
+  // Dates are handled as plain year-month-day in the visitor's own timezone.
+  // Going through UTC would shift the day for anyone in the Americas.
+  const ymd = (d) =>
+    [d.getFullYear(), String(d.getMonth() + 1).padStart(2, '0'), String(d.getDate()).padStart(2, '0')].join('-');
+  const fromYmd = (s) => {
+    const [y, m, d] = s.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  };
+  const pretty = (s) =>
+    fromYmd(s).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+  document.querySelectorAll('[data-calendar]').forEach((root) => {
+    const isRange = root.dataset.mode === 'range';
+    const startInput = root.querySelector('[data-cal-start]');
+    const endInput = root.querySelector('[data-cal-end]');
+    const trigger = root.querySelector('[data-cal-trigger]');
+    const pop = root.querySelector('[data-cal-pop]');
+    const grid = root.querySelector('[data-cal-grid]');
+    const monthLabel = root.querySelector('[data-cal-month]');
+    const hint = root.querySelector('[data-cal-hint]');
+    const prevButton = root.querySelector('[data-cal-prev]');
+    const nextButton = root.querySelector('[data-cal-next]');
+    const placeholder = root.querySelector('[data-cal-display]').textContent;
+    const display = root.querySelector('[data-cal-display]');
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const firstAllowed = ymd(today);
+
+    let view = new Date(today.getFullYear(), today.getMonth(), 1);
+    let start = '';
+    let end = '';
+    let focused = firstAllowed;
+
+    function updateDisplay() {
+      if (!start) {
+        display.textContent = placeholder;
+        root.classList.remove('is-set');
+      } else if (!isRange) {
+        display.textContent = pretty(start);
+        root.classList.add('is-set');
+      } else if (!end) {
+        display.textContent = `${pretty(start)} to ...`;
+        root.classList.add('is-set');
+      } else {
+        display.textContent = `${pretty(start)} to ${pretty(end)}`;
+        root.classList.add('is-set');
+      }
+
+      startInput.value = start;
+      if (endInput) endInput.value = end;
+
+      // Anything listening for a date change, like the page's own checks.
+      root.dispatchEvent(new CustomEvent('cal:change', { bubbles: true, detail: { start, end } }));
+    }
+
+    function updateHint() {
+      if (!isRange) hint.textContent = 'Pick a day.';
+      else if (!start) hint.textContent = 'Pick the first day.';
+      else if (!end) hint.textContent = 'Now pick the last day.';
+      else hint.textContent = 'Pick a new first day to start over.';
+    }
+
+    function render() {
+      monthLabel.textContent = view.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+      grid.replaceChildren();
+
+      const year = view.getFullYear();
+      const month = view.getMonth();
+      const leading = new Date(year, month, 1).getDay();
+      const days = new Date(year, month + 1, 0).getDate();
+
+      // Empty squares so the first of the month lands on the right weekday.
+      for (let i = 0; i < leading; i += 1) {
+        const blank = document.createElement('span');
+        blank.className = 'cal__day is-blank';
+        grid.appendChild(blank);
+      }
+
+      for (let day = 1; day <= days; day += 1) {
+        const value = ymd(new Date(year, month, day));
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'cal__day';
+        button.textContent = String(day);
+        button.dataset.value = value;
+        button.disabled = value < firstAllowed;
+        button.tabIndex = value === focused ? 0 : -1;
+
+        if (value === firstAllowed) button.classList.add('is-today');
+        if (value === start || (end && value === end)) button.classList.add('is-edge');
+        else if (start && end && value > start && value < end) button.classList.add('in-range');
+
+        const picked = value === start || value === end;
+        button.setAttribute('aria-pressed', String(picked));
+        button.setAttribute(
+          'aria-label',
+          fromYmd(value).toLocaleDateString('en-US', {
+            weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
+          })
+        );
+
+        grid.appendChild(button);
+      }
+
+      // Never let anyone page back into months that are entirely in the past.
+      prevButton.disabled =
+        year === today.getFullYear() && month === today.getMonth();
+
+      updateHint();
+    }
+
+    function choose(value) {
+      if (!isRange) {
+        start = value;
+        updateDisplay();
+        render();
+        close();
+        return;
+      }
+
+      if (!start || end || value < start) {
+        // Starting fresh, either first click or picking an earlier day.
+        start = value;
+        end = '';
+      } else {
+        end = value;
+      }
+
+      updateDisplay();
+      render();
+    }
+
+    function open() {
+      pop.hidden = false;
+      trigger.setAttribute('aria-expanded', 'true');
+      focused = start || firstAllowed;
+      // Show the month the chosen date is in, not always today's month.
+      const focusDate = fromYmd(focused);
+      view = new Date(focusDate.getFullYear(), focusDate.getMonth(), 1);
+      render();
+      grid.querySelector(`[data-value="${focused}"]`)?.focus();
+    }
+
+    function close() {
+      pop.hidden = true;
+      trigger.setAttribute('aria-expanded', 'false');
+    }
+
+    trigger.addEventListener('click', () => {
+      pop.hidden ? open() : close();
+    });
+
+    grid.addEventListener('click', (event) => {
+      const day = event.target.closest('.cal__day');
+      if (day && !day.disabled) choose(day.dataset.value);
+    });
+
+    // Arrow keys move around the grid the way a calendar should.
+    grid.addEventListener('keydown', (event) => {
+      const steps = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 };
+      const step = steps[event.key];
+      if (!step) return;
+      event.preventDefault();
+
+      const next = fromYmd(focused);
+      next.setDate(next.getDate() + step);
+      const value = ymd(next);
+      if (value < firstAllowed) return;
+
+      focused = value;
+      view = new Date(next.getFullYear(), next.getMonth(), 1);
+      render();
+      grid.querySelector(`[data-value="${focused}"]`)?.focus();
+    });
+
+    prevButton.addEventListener('click', () => {
+      view = new Date(view.getFullYear(), view.getMonth() - 1, 1);
+      render();
+    });
+
+    nextButton.addEventListener('click', () => {
+      view = new Date(view.getFullYear(), view.getMonth() + 1, 1);
+      render();
+    });
+
+    root.querySelector('[data-cal-clear]').addEventListener('click', () => {
+      start = '';
+      end = '';
+      updateDisplay();
+      render();
+    });
+
+    root.querySelector('[data-cal-done]').addEventListener('click', () => {
+      close();
+      trigger.focus();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !pop.hidden) {
+        close();
+        trigger.focus();
+      }
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!pop.hidden && !root.contains(event.target)) close();
+    });
+
+    updateDisplay();
+    render();
+  });
+</script>

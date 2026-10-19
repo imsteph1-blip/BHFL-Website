@@ -1,0 +1,562 @@
+---
+/**
+ * Our Story. The heart of the site.
+ *
+ * All of the words on this page are Stephanie and Luke's own.
+ */
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Photo from '../components/Photo.astro';
+import ClosingCta from '../components/ClosingCta.astro';
+import { business } from '../data/site.js';
+
+/**
+ * The stats shown on this page.
+ *
+ * Kept here rather than in site.js because the homepage still says 13+ years.
+ * Once Stephanie confirms, both can move back to one shared list.
+ */
+const stats = ['14+ years caring for animals', '100+ stays', '5-star reviews'];
+
+/** What a home entrusted to us can count on. */
+const promises = [
+  {
+    title: 'Being there matters most',
+    text: 'We make it our highest priority to be with your pets as much as possible. Their comfort, routine, and company come first, every single day.',
+  },
+  {
+    title: 'No parties, no gatherings',
+    text: 'We respect your home and keep it a space solely for your pets. No parties, no get-togethers, no exceptions.',
+  },
+  {
+    title: 'No unexpected guests',
+    text: 'You trust us with your home and pets, not anyone else. Luke and Stephanie are the only people your pets will see, and nobody comes through your door unless you\'ve agreed to it in advance.',
+  },
+  {
+    title: 'Your privacy is protected',
+    text: 'Your address, door codes, and personal information are never shared with anyone. What you trust us with stays with us.',
+  },
+  {
+    title: 'Your home, just as you left it',
+    text: 'We take care of your home as carefully as your pets. Everything is tidied and put back, so you come home to the same space you left.',
+  },
+  {
+    title: 'Peace of mind, daily',
+    text: 'You\'ll get photos and messages every day of the stay, so you\'re never left wondering how your pets are doing.',
+  },
+  {
+    title: 'Every detail, followed',
+    text: 'Your pets thrive on routine, so we keep it. Meals, walks, medications, and all the little habits, done just the way you do them.',
+  },
+  {
+    title: 'No surprises',
+    text: 'Big or small, if something happens during a stay, we tell you right away. No surprises when you get home.',
+  },
+];
+---
+
+<Base
+  title="Our Story"
+  description="Stephanie and Luke Rodgers care for homes and animals across North Idaho. How they met, why they do this, and the promises behind the name Because He First Loved."
+>
+  {/* 1. Hero -------------------------------------------------------------- */}
+  <PageHero
+    title="Our Story"
+    line="A little about us, and a lot about why we love what we do."
+    photo="our-story-hero.jpg"
+    photoAlt=""
+    art="butterfly-front"
+  />
+
+  {/* 2. The beginning ------------------------------------------------------ */}
+  <section class="section">
+    <div class="wrap">
+      <div class="center section__head">
+        <p class="eyebrow">The beginning</p>
+        <h2>Loving animals came before anything else</h2>
+      </div>
+
+      {/* Three rows that alternate sides. The photo always comes first in the
+          markup, so on a phone every row reads picture then words. */}
+      <div class="zigzag">
+        <div class="zz-row">
+          <figure class="zz-photo">
+            <Photo
+              src="our-story-stephanie-young.jpg"
+              alt="Stephanie as a girl with one of her childhood dogs"
+              ratio="4 / 3"
+              frame
+              tilt={-2}
+            />
+          </figure>
+          <div class="zz-body">
+            <h3 class="story__title">She was the animal whisperer</h3>
+            <p>
+              Stephanie was a pet lover at heart before she could even walk. She
+              was the toddler leaning out of her stroller for every dog on the
+              sidewalk, and the little girl dressing up her childhood dogs in
+              bows and dresses, which they very graciously tolerated.
+            </p>
+            <p>
+              By the age of 10, she was the neighborhood pet sitter. Families
+              trusted her with their animals, then their friends did too.
+              Somewhere along the way, people started calling her the animal
+              whisperer. Shy dogs came out to play. Nervous cats settled in her
+              lap. To this day, she still has that special touch.
+            </p>
+          </div>
+        </div>
+
+        <div class="zz-row zz-row--flip">
+          <figure class="zz-photo">
+            <Photo
+              src="our-story-luke-young.jpg"
+              alt="Luke as a boy outdoors with one of his Labs"
+              ratio="4 / 3"
+              frame
+              tilt={2}
+            />
+          </figure>
+          <div class="zz-body">
+            <h3 class="story__title">And he was the boy with a Lab at his side</h3>
+            <p>
+              Luke grew up with Labs, the kind of dogs who are always ready for
+              whatever comes next. As a boy, he couldn't go anywhere without
+              them. Every creek, trail, and backyard adventure had a dog right
+              beside him, muddy and happy.
+            </p>
+            <p>
+              That boy grew into a man with a big, soft heart for every animal
+              he meets. Dogs have always been his first love, but lately, much
+              to his own surprise, Luke has become a real cat guy. His heart
+              just keeps getting bigger.
+            </p>
+          </div>
+        </div>
+
+        <div class="zz-row">
+          <figure class="zz-photo">
+            <Photo
+              src="our-story-together.jpg"
+              alt="Stephanie and Luke with a foster kitten"
+              ratio="4 / 3"
+              frame
+              tilt={-2}
+            />
+          </figure>
+          <div class="zz-body">
+            <h3 class="story__title">And now, together</h3>
+            <p>
+              Today, even without pets of our own right now, God keeps filling
+              our home with little ones who need us. We foster kittens for a
+              local humane shelter, most arriving very young and very small. We
+              feed them, care for them, and love them until they're strong
+              enough to find their forever families.
+            </p>
+            <p>
+              If we're not caring for your pets or our foster kittens, we're
+              probably with our family's dogs, who live close by.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* 3. The two of us ------------------------------------------------------ */}
+  <section class="section band-cream">
+    <div class="wrap split split--reverse">
+      <div class="split__body">
+        <p class="eyebrow">The two of us</p>
+        <h2>91 days to forever</h2>
+        <p>
+          We met in the middle, at a Christian rally in Seattle. Stephanie had
+          lived her whole life in Oregon, and Luke had put down roots in Idaho
+          with his family. A few weeks apart was all the distance we could take.
+          Stephanie moved to Idaho, and within 91 days we were married on top of
+          a mountain in Kellogg, sealing our vows with our very first kiss.
+        </p>
+        <p>
+          We became business owners the same season we became husband and wife.
+          Luke gave his notice three days before the wedding, and Stephanie left
+          her job in Oregon with nothing lined up, only a heart trusting the Lord
+          to provide. He has been faithful every step of the way, and this
+          business is now our full-time calling.
+        </p>
+        <p>
+          These days, we're full-time entrepreneurs, setting our own schedules
+          and building our businesses together, one client and one home at a
+          time. When we're not out in the field, you'll often find us at a
+          coffee shop dreaming up new ways to bless our clients, or working on
+          our laptops at a client's kitchen table while their dog naps at our
+          feet.
+        </p>
+        <p>
+          We work most stays together. That means your animals get two sets of
+          hands and two people who know their routine, and the house is rarely
+          empty.
+        </p>
+      </div>
+
+      <div class="split__media">
+        <figure class="collage collage--right">
+          <div class="collage__big">
+            <Photo
+              src="our-story-wedding.jpg"
+              alt="Stephanie and Luke on their wedding day on a mountain in Kellogg"
+              ratio="4 / 5"
+            />
+          </div>
+          <div class="collage__small">
+            <Photo
+              src="our-story-working.jpg"
+              alt="Stephanie and Luke working on their laptops at a coffee shop"
+              ratio="1 / 1"
+            />
+          </div>
+          <figcaption class="side-caption collage__caption">Two of us, every stay</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  {/* 4. Why the name ------------------------------------------------------- */}
+  <section class="section--tall band-khaki why">
+    <img
+      class="why__art art"
+      src="/images/brand/prepared/butterfly-lily-diagonal-cream.png"
+      alt=""
+      aria-hidden="true"
+    />
+
+    <div class="wrap wrap--narrow center why__inner">
+      <p class="eyebrow">Why the name</p>
+      <p class="why__verse">&ldquo;{business.verse}&rdquo;</p>
+      <p class="why__ref">{business.verseRef}</p>
+      <p class="why__body">
+        It's simple. We love because He first loved us, and we live that out
+        every day, with every animal and every owner. Our faith is the heart of
+        how we run this business.
+      </p>
+      <p class="why__body">
+        It shows up in how your animals and your home are treated. Our beliefs
+        are the centerpiece of every stay, from the way we greet your pets to the
+        way we leave your home. They're the foundation of everything we do, and
+        what makes us different.
+      </p>
+    </div>
+  </section>
+
+  {/* 5. What you can count on ----------------------------------------------- */}
+  <section class="section">
+    <div class="wrap">
+      <div class="center section__head">
+        <p class="eyebrow">A home entrusted to us</p>
+        <h2>What you can count on</h2>
+        <p class="section__lead">
+          These are our promises to you, your animals, and your home.
+        </p>
+      </div>
+
+      <ul class="promises">
+        {
+          promises.map((promise) => (
+            <li class="promises__item">
+              <h3>{promise.title}</h3>
+              <p>{promise.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  {/* 6. Where we are now ------------------------------------------------------ */}
+  <section class="section band-cream center">
+    <div class="wrap wrap--narrow">
+      <p class="eyebrow">Where we are now</p>
+      <ul class="facts">
+        {stats.map((fact) => <li>{fact}</li>)}
+      </ul>
+      <p class="facts__note">
+        North Idaho's trusted pet sitters and home care team. Serving Coeur
+        d'Alene, Hayden, Rathdrum, Post Falls, Athol, Sagle, Sandpoint, and
+        surrounding areas. We travel for the right fit.
+      </p>
+      <a class="bracket-link" href="/service-area/" data-label="see our full service area">
+        <span class="bracket-link__arrow"></span>
+      </a>
+    </div>
+  </section>
+
+  {/* 7. Closing ---------------------------------------------------------------- */}
+  <ClosingCta
+    heading="We'd love to hear how we can serve you."
+    line="Every first booking starts with a free meet-and-greet. No deposit needed to talk!"
+  />
+</Base>
+
+<style>
+  .section__head {
+    margin-bottom: var(--space-lg);
+  }
+
+
+  .section__lead {
+    max-width: 48ch;
+    margin-inline: auto;
+  }
+
+  /* A subheading above a story. */
+  .story__title {
+    margin-top: 0;
+    margin-bottom: var(--space-sm);
+    font-size: clamp(1rem, 0.94rem + 0.3vw, 1.15rem);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ---- The zigzag -------------------------------------------------------- */
+
+  .zz-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
+
+  /* Even air between the rows, and none left over inside them. */
+  .zz-row + .zz-row {
+    margin-top: var(--space-xl);
+  }
+
+  @media (min-width: 820px) {
+    .zz-row {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-2xl);
+      /* The words sit level with the middle of the picture beside them. */
+      align-items: center;
+    }
+
+    .zz-row + .zz-row {
+      margin-top: var(--space-2xl);
+    }
+
+    /* Every other row turns around. The picture stays first in the markup, so
+       the phone layout keeps reading picture then words either way. */
+    .zz-row--flip .zz-photo {
+      order: 2;
+    }
+  }
+
+  .zz-photo {
+    margin: 0;
+  }
+
+  .zz-body > :last-child {
+    margin-bottom: 0;
+  }
+
+  /* ---- Two-column sections with a photo collage -------------------------- */
+
+  .split {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+    /* Photos sit level with the top of the writing. The stories here run long
+       enough that centering would leave the pictures stranded low down. */
+    align-items: stretch;
+  }
+
+  @media (min-width: 900px) {
+    .split {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-2xl);
+    }
+
+    .split--reverse {
+      grid-template-columns: 1.1fr 0.9fr;
+    }
+  }
+
+  .split__media {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .collage {
+    position: relative;
+    margin: 0;
+    padding-left: 2.2rem;
+    padding-bottom: 2.75rem;
+  }
+
+  .collage--right {
+    padding-left: 0;
+    padding-right: 2.2rem;
+  }
+
+  @media (min-width: 900px) {
+    /* This section has one group of photos rather than two, so it is centred
+       against the writing. Left at the top it would trail off into a long
+       empty stretch underneath. */
+    .split--reverse .split__media {
+      justify-content: center;
+    }
+  }
+
+  .collage__small {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 44%;
+  }
+
+  .collage--right .collage__small {
+    left: auto;
+    right: 0;
+    box-shadow: 0 8px 26px rgba(58, 58, 52, 0.14);
+  }
+
+  .collage__caption {
+    position: absolute;
+    top: 0;
+    left: -0.4rem;
+  }
+
+  .collage--right .collage__caption {
+    left: auto;
+    right: -0.4rem;
+  }
+
+  @media (min-width: 900px) {
+    .collage__caption {
+      left: -1.2rem;
+    }
+
+    .collage--right .collage__caption {
+      left: auto;
+      right: -1.2rem;
+    }
+  }
+
+  /* ---- Why the name ------------------------------------------------------- */
+
+  .why {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .why__inner {
+    position: relative;
+  }
+
+  /* The tall butterfly and lilies, sitting behind the words at the edge. */
+  .why__art {
+    display: none;
+  }
+
+  @media (min-width: 1000px) {
+    .why__art {
+      display: block;
+      position: absolute;
+      left: 4%;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 74%;
+      width: auto;
+      opacity: 0.5;
+      z-index: 0;
+    }
+  }
+
+  .why__verse {
+    margin: 0 0 var(--space-xs);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(1.6rem, 1.1rem + 2.2vw, 2.8rem);
+    line-height: 1.3;
+    color: var(--cream);
+  }
+
+  .why__ref {
+    margin: 0 0 var(--space-lg);
+    font-size: clamp(0.66rem, 0.63rem + 0.12vw, 0.72rem);
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: rgba(244, 239, 227, 0.86);
+  }
+
+  .why__body {
+    max-width: 52ch;
+    margin-inline: auto;
+  }
+
+  /* ---- What you can count on ----------------------------------------------- */
+
+  .promises {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 720px) {
+    .promises {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-lg) var(--space-xl);
+    }
+  }
+
+  .promises__item {
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--hairline);
+  }
+
+  .promises__item h3 {
+    margin-bottom: 0.4rem;
+    font-size: clamp(1.08rem, 0.98rem + 0.45vw, 1.3rem);
+    letter-spacing: 0.03em;
+  }
+
+  .promises__item p {
+    margin: 0;
+    font-size: 0.94em;
+  }
+
+  /* ---- Where we are now ------------------------------------------------------ */
+
+  .facts {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+    list-style: none;
+    margin: var(--space-md) 0;
+    padding: 0;
+  }
+
+  @media (min-width: 640px) {
+    .facts {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-md);
+    }
+  }
+
+  .facts li {
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 0.88rem + 0.5vw, 1.3rem);
+    line-height: 1.35;
+    letter-spacing: 0.03em;
+    color: var(--olive-ink);
+  }
+
+  .facts__note {
+    max-width: 52ch;
+    margin: 0 auto var(--space-md);
+    font-size: 0.92em;
+    color: var(--caption);
+  }
+</style>
